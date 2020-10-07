@@ -17,7 +17,7 @@ int main(int argc, char** argv){
     }
     else {
         cout << "The parameters are: –d <input file> –q <query file> –k <int> -L <int> -ο <output file> -Ν <number of nearest> -R <radius>" << endl;
-        cout << "The necessary parameters are: –d <input file> –q <query file>" << endl;
+        cout << "The necessary parameters are: –d <input file> –q <query file>";
     }
 
 

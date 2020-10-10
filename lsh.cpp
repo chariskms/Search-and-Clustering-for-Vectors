@@ -93,7 +93,7 @@ int main(int argc, char** argv){
             numberOfColumns = SWAP_INT32(numberOfColumns);
             
 
-            input.close();
+            
 
             cout << magicNumber << endl;
             cout << numberOfColumns << endl;
@@ -103,15 +103,13 @@ int main(int argc, char** argv){
 
             vector<imageVector *> images;
 
-            
-
             for(int i=0; i<numberOfImages;i++){
                 
                 input.read((char*)buffer, numOfpixels);  
                 images.push_back(new imageVector(numberOfRows, numberOfColumns, buffer));
             }
             
-
+            input.close();
             
             delete[] buffer;
 

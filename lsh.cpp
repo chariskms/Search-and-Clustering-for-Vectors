@@ -3,6 +3,8 @@
 #include <string.h>
 #include <time.h>
 #include <vector> 
+#include <fstream>
+#define SWAP_INT32(x) (((x) >> 24) | (((x) & 0x00FF0000) >> 8) | (((x) & 0x0000FF00) << 8) | ((x) << 24))
 
 #include "imageVector.h"
 
@@ -59,21 +61,41 @@ int main(int argc, char** argv){
             clock_t tStart = clock();
             //cout << "Run program with parameters: ->" << d << " -> " << q << " -> " << K << " -> " << L << " -> " << o << " -> " << N << " -> " << R << endl;
 
-            FILE* fileFd = fopen(d,"rb");
-            if(fileFd == NULL){
-                cout << "Wrong file input." << endl;
-                exit(0);
-            }
+
+            // cout << d<<endl;
+            // FILE* fileFd = fopen(d,"r");
+            // if(fileFd == NULL){
+            //     cout << "Wrong file input." << endl;
+            //     exit(0);
+            // }
+            
+
 
             int magicNumber = 0,numberOfImages = 0,numberOfRows = 0,numberOfColumns = 0;
             int numOfpixels;
+            cout<<d<<endl;
+
+            fstream input(d);
+
+            if(!input.is_open()){ 
+                cerr<<"Failed to open input data."<<endl;
+                exit(0);
+            }
             
-            fread(&magicNumber, sizeof(int), 1, fileFd);
-            fread(&numberOfImages, sizeof(int), 1, fileFd);
-            fread(&numberOfRows, sizeof(int), 1, fileFd);
-            fread(&numberOfColumns, sizeof(int), 1, fileFd);
+            input.read((char*)&magicNumber, 4);
+            input.read((char*)&numberOfImages, 4);
+            input.read((char*)&numberOfRows, 4);
+            input.read((char*)&numberOfColumns, 4);
+
+            magicNumber = SWAP_INT32(magicNumber);
+            numberOfImages = SWAP_INT32(numberOfImages);
+            numberOfRows = SWAP_INT32(numberOfRows);
+            numberOfColumns = SWAP_INT32(numberOfColumns);
             
-            cout << numberOfImages << endl;
+
+            input.close();
+
+            cout << magicNumber << endl;
             cout << numberOfColumns << endl;
             numOfpixels = numberOfRows*numberOfColumns;
 
@@ -83,17 +105,17 @@ int main(int argc, char** argv){
 
             
 
-            // for(int i=0; i<numberOfImages;i++){
-
-                fread(buffer, sizeof(unsigned char), numOfpixels, fileFd);   
+            for(int i=0; i<numberOfImages;i++){
+                
+                input.read((char*)buffer, numOfpixels);  
                 images.push_back(new imageVector(numberOfRows, numberOfColumns, buffer));
-            //}
+            }
             
 
             
             delete[] buffer;
 
-            fclose(fileFd);
+            //fclose(fileFd);
             /* PROGRAM ENDS HERE */
             exec_time = (double)(clock() - tStart)/CLOCKS_PER_SEC;
             cout << "Execution time is: "<< exec_time << endl;

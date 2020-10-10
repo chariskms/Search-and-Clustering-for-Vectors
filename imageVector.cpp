@@ -20,8 +20,7 @@ imageVector::imageVector(int numberOfRows,int numberOfColumns, unsigned char * b
         for(int j = 0; j < numberOfColumns;j++){
             pixels[i][j] = buffer[i*numberOfColumns + j];
             
-        }   
-        cout << "done" << endl; 
+        }      
     }
 
 }

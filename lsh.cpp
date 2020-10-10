@@ -61,19 +61,8 @@ int main(int argc, char** argv){
             clock_t tStart = clock();
             //cout << "Run program with parameters: ->" << d << " -> " << q << " -> " << K << " -> " << L << " -> " << o << " -> " << N << " -> " << R << endl;
 
-
-            // cout << d<<endl;
-            // FILE* fileFd = fopen(d,"r");
-            // if(fileFd == NULL){
-            //     cout << "Wrong file input." << endl;
-            //     exit(0);
-            // }
-            
-
-
             int magicNumber = 0,numberOfImages = 0,numberOfRows = 0,numberOfColumns = 0;
             int numOfpixels;
-            cout<<d<<endl;
 
             fstream input(d);
 
@@ -87,16 +76,17 @@ int main(int argc, char** argv){
             input.read((char*)&numberOfRows, 4);
             input.read((char*)&numberOfColumns, 4);
 
+            //convert intergers from Big Endian to Little Endian
             magicNumber = SWAP_INT32(magicNumber);
             numberOfImages = SWAP_INT32(numberOfImages);
             numberOfRows = SWAP_INT32(numberOfRows);
             numberOfColumns = SWAP_INT32(numberOfColumns);
-            
+        
+            cout << "magic Number: " << magicNumber << endl;
+            cout << "number Of Images: " << numberOfImages << endl;
+            cout << "number Of Rows: " << numberOfRows << endl;
+            cout << "number Of Columns: " << numberOfColumns << endl;
 
-            
-
-            cout << magicNumber << endl;
-            cout << numberOfColumns << endl;
             numOfpixels = numberOfRows*numberOfColumns;
 
             unsigned char *buffer = new unsigned char[numOfpixels];
@@ -112,6 +102,11 @@ int main(int argc, char** argv){
             input.close();
             
             delete[] buffer;
+
+
+            //here query input
+
+
 
             //fclose(fileFd);
             /* PROGRAM ENDS HERE */

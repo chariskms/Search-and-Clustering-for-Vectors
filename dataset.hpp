@@ -8,7 +8,7 @@ class Dataset{
 
     unsigned char* images;
     public:
-        Dataset(int , int , int ,int , unsigned char * );
+        Dataset(int , int , int ,int);
         ~Dataset();
 
         int getNumberOfRows(){return numberOfRows;};

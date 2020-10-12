@@ -8,7 +8,7 @@
 
 using namespace std;
 
-Dataset::Dataset(int magicNumber,int numberOfImages, int numberOfColumns,int numberOfRows, unsigned char * buffer){
+Dataset::Dataset(int magicNumber,int numberOfImages, int numberOfColumns,int numberOfRows){
     numberOfRows = numberOfRows;
     numberOfColumns = numberOfColumns;
     magicNumber = magicNumber;
@@ -16,7 +16,6 @@ Dataset::Dataset(int magicNumber,int numberOfImages, int numberOfColumns,int num
     numberOfPixels = numberOfColumns*numberOfRows;
 
     unsigned char* images = new unsigned char[numberOfImages*numberOfPixels];
-    memcpy(images, buffer, numberOfImages*numberOfPixels);
 
 }
 

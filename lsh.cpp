@@ -87,22 +87,16 @@ int main(int argc, char** argv){
 
             numOfpixels = numberOfRows*numberOfColumns;
 
-            unsigned char *buffer = new unsigned char[numOfpixels*numberOfImages];
+            Dataset dataset(magicNumber, numberOfImages, numberOfRows, numberOfColumns);
 
-            input.read((char*)buffer, numOfpixels*numberOfImages);
-
-            Dataset dataset(magicNumber, numberOfImages, numberOfRows, numberOfColumns, buffer);
+            input.read((char*)dataset.imageAt(0), dataset.getNumberOfpixels()*dataset.getNumberOfImages());
 
             input.close();
-
-            delete[] buffer;
-
 
             //here query input
 
 
 
-            //fclose(fileFd);
             /* PROGRAM ENDS HERE */
             exec_time = (double)(clock() - tStart)/CLOCKS_PER_SEC;
             cout << "Execution time is: "<< exec_time << endl;

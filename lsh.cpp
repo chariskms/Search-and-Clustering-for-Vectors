@@ -6,7 +6,7 @@
 #include <fstream>
 #define SWAP_INT32(x) (((x) >> 24) | (((x) & 0x00FF0000) >> 8) | (((x) & 0x0000FF00) << 8) | ((x) << 24))
 
-#include "imageVector.h"
+#include "dataset.h"
 
 #define IMAGESIZE 800
 // ./lsh –d <input file> –q <query file> –k <int> -L <int> -ο <output file> -Ν <number of nearest> -R <radius>
@@ -89,16 +89,12 @@ int main(int argc, char** argv){
 
             numOfpixels = numberOfRows*numberOfColumns;
 
-            unsigned char *buffer = new unsigned char[numOfpixels];
+            unsigned char *buffer = new unsigned char[numOfpixels*numberOfImages];
 
-            vector<imageVector *> images;
+            input.read((char*)buffer, numOfpixels*numberOfImages);  
 
-            for(int i=0; i<numberOfImages;i++){
-                
-                input.read((char*)buffer, numOfpixels);  
-                images.push_back(new imageVector(numberOfRows, numberOfColumns, buffer));
-            }
-            
+            Dataset dataset(magicNumber, numberOfImages, numberOfRows, numberOfColumns, buffer);
+
             input.close();
             
             delete[] buffer;

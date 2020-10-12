@@ -14,12 +14,9 @@ Dataset::Dataset(int magicNumber,int numberOfImages, int numberOfColumns,int num
     magicNumber = magicNumber;
     numberOfImages = numberOfImages;
     numberOfPixels = numberOfColumns*numberOfRows;
-
-    unsigned char* images = new unsigned char[numberOfImages*numberOfPixels];
-
+    images = new unsigned char[numberOfImages*numberOfPixels];
 }
 
 Dataset::~Dataset(){
     delete[] images;
 }
-

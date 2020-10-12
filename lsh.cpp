@@ -87,7 +87,7 @@ int main(int argc, char** argv){
 
             numOfpixels = numberOfRows*numberOfColumns;
 
-            Dataset dataset(magicNumber, numberOfImages, numberOfRows, numberOfColumns);
+            Dataset dataset(magicNumber, numberOfImages, numberOfColumns, numberOfRows);
 
             input.read((char*)dataset.imageAt(0), (dataset.getNumberOfPixels())*(dataset.getNumberOfImages()));
 
@@ -107,6 +107,4 @@ int main(int argc, char** argv){
         cout << "You must run the program with parameters(REQUIRED): –d <input file> –q <query file>" << endl;
         cout << "With additional parameters: –k <int> -L <int> -ο <output file> -Ν <number of nearest> -R <radius>" << endl;
     }
-
-
 }

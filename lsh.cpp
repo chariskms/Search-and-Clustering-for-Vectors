@@ -4,7 +4,7 @@
 #include <time.h>
 #include <vector>
 #include <fstream>
-#include "dataset.h"
+#include "dataset.hpp"
 
 #define IMAGESIZE 800
 #define SWAP_INT32(x) (((x) >> 24) | (((x) & 0x00FF0000) >> 8) | (((x) & 0x0000FF00) << 8) | ((x) << 24))

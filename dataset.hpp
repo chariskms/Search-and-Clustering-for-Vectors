@@ -16,7 +16,9 @@ class Dataset{
         int getMagicNumber(){return magicNumber;};
         int getNumberOfImages(){return numberOfImages;};
         int getNumberOfPixels(){return numberOfPixels;};
-        inline unsigned char* imageAt(int);
+        inline unsigned char* imageAt(int index){
+            return &images[index*numberOfPixels];
+        }
 
 
 

@@ -23,6 +23,3 @@ Dataset::~Dataset(){
     delete[] images;
 }
 
-inline unsigned char * Dataset::imageAt(int index){
-    return &images[index*numberOfPixels];
-}

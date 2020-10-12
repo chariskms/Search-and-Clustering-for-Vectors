@@ -89,7 +89,7 @@ int main(int argc, char** argv){
 
             Dataset dataset(magicNumber, numberOfImages, numberOfRows, numberOfColumns);
 
-            input.read((char*)dataset.imageAt(0), dataset.getNumberOfpixels()*dataset.getNumberOfImages());
+            input.read((char*)dataset.imageAt(0), (dataset.getNumberOfPixels())*(dataset.getNumberOfImages()));
 
             input.close();
 

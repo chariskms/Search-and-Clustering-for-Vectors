@@ -85,8 +85,6 @@ int main(int argc, char** argv){
             cout << "number Of Rows: " << numberOfRows << endl;
             cout << "number Of Columns: " << numberOfColumns << endl;
 
-            numOfpixels = numberOfRows*numberOfColumns;
-
             Dataset dataset(magicNumber, numberOfImages, numberOfColumns, numberOfRows);
 
             input.read((char*)dataset.imageAt(0), (dataset.getNumberOfPixels())*(dataset.getNumberOfImages()));

@@ -127,7 +127,7 @@ int main(int argc, char** argv){
 
             ////////////structure test///////////////////////////////////////////////////////////////////
 
-            vector<vector <hashFunction>> hashFunctions ;
+            vector<vector <hashFunction*>> hashFunctions;
 
             //////////////////////////////////////////////////////////////////
 

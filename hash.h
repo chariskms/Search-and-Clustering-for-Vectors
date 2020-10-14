@@ -1,3 +1,6 @@
+#include <vector>
+#include <iostream>
+#include <stdlib.h>
 class hashFunction{
     int * s_numbers;
     int d; //d diastasi 
@@ -17,3 +20,5 @@ class hashFunction{
 
 
 };
+
+// int gconcat(vector <hashFunction*>);

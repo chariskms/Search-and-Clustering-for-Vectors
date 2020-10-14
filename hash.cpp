@@ -2,6 +2,9 @@
 #include <stdlib.h>  
 #include <time.h>
 #include <cmath> 
+#include <vector>
+#include <iostream>
+#include <stdlib.h>
 
 
 hashFunction::hashFunction(int d, int w, int k = 1){
@@ -35,5 +38,11 @@ int hashFunction::hash(unsigned char* x){
     }
     h = h%M;
     return h;
+
+}
+
+int gconcat(&vector <hashFunction*> funcs){
+
+
 
 }

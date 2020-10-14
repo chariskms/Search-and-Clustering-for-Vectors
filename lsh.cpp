@@ -5,8 +5,8 @@
 #include <vector>
 #include <fstream>
 #include "dataset.hpp"
+#include "hash.h"
 
-#define IMAGESIZE 800
 #define SWAP_INT32(x) (((x) >> 24) | (((x) & 0x00FF0000) >> 8) | (((x) & 0x0000FF00) << 8) | ((x) << 24))
 
 // ./lsh –d <input file> –q <query file> –k <int> -L <int> -ο <output file> -Ν <number of nearest> -R <radius>
@@ -123,6 +123,13 @@ int main(int argc, char** argv){
             queryInput.read((char*)querySet.imageAt(0), (querySet.getNumberOfPixels())*(querySet.getNumberOfImages()));
 
             queryInput.close();
+
+
+            ////////////structure test///////////////////////////////////////////////////////////////////
+
+            vector<vector <hashFunction>> hashFunctions ;
+
+            //////////////////////////////////////////////////////////////////
 
             /* PROGRAM ENDS HERE */
             exec_time = (double)(clock() - tStart)/CLOCKS_PER_SEC;

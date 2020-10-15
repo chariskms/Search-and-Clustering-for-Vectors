@@ -5,6 +5,7 @@
 #include <vector>
 #include <fstream>
 #include "dataset.hpp"
+#include <cmath> 
 #include "hash.h"
 
 #define SWAP_INT32(x) (((x) >> 24) | (((x) & 0x00FF0000) >> 8) | (((x) & 0x0000FF00) << 8) | ((x) << 24))
@@ -117,20 +118,27 @@ int main(int argc, char** argv){
             cout << "query number Of Rows: " << numberOfRows << endl;
             cout << "query number Of Columns: " << numberOfColumns << endl;
 
-
             Dataset querySet(magicNumber, numberOfImages, numberOfColumns, numberOfRows);
 
             queryInput.read((char*)querySet.imageAt(0), (querySet.getNumberOfPixels())*(querySet.getNumberOfImages()));
 
             queryInput.close();
-
-
             ////////////structure test///////////////////////////////////////////////////////////////////
 
-            vector<vector <hashFunction*>> hashFunctions;
+            int bucketsNumber = floor(trainSet.getNumberOfImages()/16);
 
+            int W = 2*R;////Ti W
+
+            HashTable** hashTables= new HashTable*[L];
+            for(int i= 0; i < L;i++){
+                hashTables[i] = new HashTable(trainSet.getNumberOfPixels(),bucketsNumber, K,W);
+                
+            }
             //////////////////////////////////////////////////////////////////
-
+            for(int i= 0; i < L;i++){
+                delete[] hashTables[i];
+            }
+            delete[] hashTables;
             /* PROGRAM ENDS HERE */
             exec_time = (double)(clock() - tStart)/CLOCKS_PER_SEC;
             cout << "Execution time is: "<< exec_time << endl;

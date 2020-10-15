@@ -1,7 +1,7 @@
 #include <vector>
 #include <iostream>
 #include <stdlib.h>
-class hashFunction{
+class HashFunction{
     int * s_numbers;
     int d; //d diastasi 
     int w; //w window 
@@ -11,14 +11,34 @@ class hashFunction{
 
     public:
 
-        hashFunction(int, int, int);
-
-        ~hashFunction();
-
+        HashFunction(int, int, int);
+        ~HashFunction();
         int hash(unsigned char*);
-
-
 
 };
 
-// int gconcat(vector <hashFunction*>);
+class Bucket{
+    int bucketValue;
+    std::vector<unsigned char *> images;
+
+    public:
+        Bucket(int);
+        void addImage(unsigned char *);
+        unsigned char * popBackImage();
+};
+
+class HashTable{
+    int vectorsDim;
+    int hashTableSize;      //n/16 number of buckets 
+    int numberOfHashFuncs; //k
+    HashFunction** hashFunctions;
+    Bucket** bucketArray;
+
+    public:
+        HashTable(int, int, int, int);
+        ~HashTable();
+        HashFunction** getHashFunctions(){return hashFunctions;}
+        Bucket** getBucketArray(){return bucketArray;}
+        int ghash();
+};        
+

@@ -127,21 +127,22 @@ int main(int argc, char** argv){
 
             int bucketsNumber = floor(trainSet.getNumberOfImages()/16);
 
-            int W = 2*R;////Ti W
+            int W = 3*R;////Ti W
 
             HashTable** hashTables= new HashTable*[L];
+            
             for(int i= 0; i < L;i++){
-                hashTables[i] = new HashTable(trainSet.getNumberOfPixels(),bucketsNumber, K,W);
-                
+                hashTables[i] = new HashTable(trainSet.getNumberOfPixels(),bucketsNumber, K,W);    
             }
+
             //////////////////////////////////////////////////////////////////
             for(int i= 0; i < L;i++){
-                delete[] hashTables[i];
+                delete hashTables[i];
             }
             delete[] hashTables;
             /* PROGRAM ENDS HERE */
             exec_time = (double)(clock() - tStart)/CLOCKS_PER_SEC;
-            cout << "Execution time is: "<< exec_time << endl;
+            cout << "\nExecution time is: "<< exec_time << endl;
         }
 
     }

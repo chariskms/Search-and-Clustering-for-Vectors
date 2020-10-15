@@ -21,6 +21,7 @@ HashFunction::HashFunction(int d, int w, int k = 1){
     srand (time(NULL));
     for(int i = 0;i < d;i++){
         s_numbers[i] = rand() % w;
+        
     }
 }
 
@@ -67,23 +68,26 @@ HashTable::HashTable(int vectorsDimArg, int hashTableSizeArg, int K, int W){
     this -> hashTableSize = hashTableSizeArg;
     this -> numberOfHashFuncs = K;
     hashFunctions = new HashFunction*[this -> numberOfHashFuncs];
-    for(int i; i< this -> numberOfHashFuncs; i++){
+
+    for(int i=0; i< this -> numberOfHashFuncs; i++){
         hashFunctions[i] = new HashFunction(vectorsDim, W, this -> numberOfHashFuncs);
     }
+    
     bucketArray = new Bucket*[hashTableSize];
-    for(int i; i< this -> hashTableSize; i++){
+    for(int i=0; i< this -> hashTableSize; i++){
         bucketArray[i] = new Bucket(i);
     }
+
 }
 
 HashTable::~HashTable(){
-    for(int i; i< this -> numberOfHashFuncs; i++){
-        delete[] hashFunctions[i];
+    for(int i=0; i< this -> numberOfHashFuncs; i++){
+        delete hashFunctions[i];
     }
     delete[] hashFunctions;
     
-    for(int i; i< this -> hashTableSize; i++){
-        delete[] bucketArray[i];
+    for(int i=0; i< this -> hashTableSize; i++){
+        delete bucketArray[i];
     }
     delete[] bucketArray;
 }

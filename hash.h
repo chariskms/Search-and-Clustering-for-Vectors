@@ -37,6 +37,7 @@ class HashTable{
     public:
         HashTable(int, int, int, int);
         ~HashTable();
+        int getnumberOfHashFuncs() {return numberOfHashFuncs;}
         HashFunction** getHashFunctions(){return hashFunctions;}
         Bucket** getBucketArray(){return bucketArray;}
         int ghash();

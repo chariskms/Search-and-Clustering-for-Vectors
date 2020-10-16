@@ -1,7 +1,12 @@
 CXX = g++
-OBJ = lsh
-all: $(OBJ)
-$(OBJ): %: %.cpp
-	$(CXX) -o $@ dataset.cpp $<
+all: lsh cube
+lsh:
+	$(CXX) -o lsh lsh.cpp dataset.cpp hash.cpp manhattan.cpp
+cube:
+	$(CXX) -o cube cube.cpp dataset.cpp
+run_lsh:
+	./lsh -d train-images.idx3-ubyte -R 1.0 -q t10k-images.idx3-ubyte -k 4 -L 5 -o fileo -N 1
+run_cube:
+	./cube -d train-images.idx3-ubyte -q t10k-images.idx3-ubyte -k 3 -M 10 -probes 2 -ο output -Ν 1 -R 1.0
 clean:
-	rm -f lsh *.o
+	rm -f lsh cube *.o

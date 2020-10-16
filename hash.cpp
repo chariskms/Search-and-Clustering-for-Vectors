@@ -1,15 +1,14 @@
-#include "hash.h"
-#include <stdlib.h>  
+#include <stdlib.h>
 #include <time.h>
-#include <cmath> 
+#include <cmath>
 #include <vector>
 #include <iostream>
 #include <stdlib.h>
+#include "hash.h"
 
 using namespace std;
 
 // class HashFunction
-
 HashFunction::HashFunction(int d, int w, int k = 1){
     this -> d = d;
     this -> w = w;
@@ -21,7 +20,6 @@ HashFunction::HashFunction(int d, int w, int k = 1){
     srand (time(NULL));
     for(int i = 0;i < d;i++){
         s_numbers[i] = rand() % w;
-        
     }
 }
 
@@ -30,14 +28,15 @@ HashFunction::~HashFunction(){
 }
 
 int HashFunction::hash(unsigned char* x){
-    int h = 0;
-    int a = 0;
-    
+    int h=0, a=0;
+    float tmp;
+
     for(int i =0; i<d;i++){
-        a = abs(x[i] - s_numbers[i]);
-        a = floor(a/w);
-        cout << a << endl;
+        // a = ((int)x[i]) - s_numbers[i];
+        // a = floor((double)a/w);
+        a = floor((double)(((int)x[i]) - s_numbers[i])/w);
         //a = a*pow(this -> m, d-i-1);
+        cout << "a is: " << a << endl;
         int mprev = m;
         int mpow = 0;
         if(a != 0){
@@ -45,7 +44,7 @@ int HashFunction::hash(unsigned char* x){
                 mpow = ((mprev%M)*(m%M))%M;
                 mprev = mpow;
             }
-        }    
+        }
         a = a%M*mpow;
         h = (h%M + a%M)%M;
     }
@@ -53,7 +52,6 @@ int HashFunction::hash(unsigned char* x){
 }
 
 // class Bucket
-
 Bucket::Bucket(int value){
     bucketValue = value;
 }
@@ -67,12 +65,11 @@ unsigned char * Bucket::popBackImage(){
     if(! this->images.empty()){
         image = this->images.back();
         this->images.pop_back();
-    } 
-    return image;   
+    }
+    return image;
 }
 
 // class HashTable
-
 HashTable::HashTable(int vectorsDimArg, int hashTableSizeArg, int K, int W){
     this -> vectorsDim = vectorsDimArg;
     this -> hashTableSize = hashTableSizeArg;
@@ -82,7 +79,7 @@ HashTable::HashTable(int vectorsDimArg, int hashTableSizeArg, int K, int W){
     for(int i=0; i< this -> numberOfHashFuncs; i++){
         hashFunctions[i] = new HashFunction(vectorsDim, W, this -> numberOfHashFuncs);
     }
-    
+
     bucketArray = new Bucket*[hashTableSize];
     for(int i=0; i< this -> hashTableSize; i++){
         bucketArray[i] = new Bucket(i);
@@ -95,7 +92,7 @@ HashTable::~HashTable(){
         delete hashFunctions[i];
     }
     delete[] hashFunctions;
-    
+
     for(int i=0; i< this -> hashTableSize; i++){
         delete bucketArray[i];
     }
@@ -108,9 +105,8 @@ int HashTable::ghash(unsigned char * image){
     int hash = 0;
     for(int i =0; i< numberOfHashFuncs;i++){
         hash = hashFunctions[i]->hash(image);
-        cout<<hash<<endl;
+        cout << "in ghash: " << hash << endl;
         concat = (concat << shift) | hash;
     }
     return concat;
 }
-

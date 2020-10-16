@@ -112,7 +112,7 @@ int main(int argc, char** argv){
             }
             // for(int i = 0; i < 2;i++){
                 //if(hashTables[0]->ghash(trainSet.imageAt(0)) > 0){
-            cout << hashTables[0]->ghash(trainSet.imageAt(0)) << endl;
+            cout << "in main: "<< hashTables[0]->ghash(trainSet.imageAt(0)) << endl;
                 // }
             // }
             //////////////////////////////////////////////////////////////////

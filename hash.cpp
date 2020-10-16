@@ -32,13 +32,23 @@ HashFunction::~HashFunction(){
 int HashFunction::hash(unsigned char* x){
     int h = 0;
     int a = 0;
+    
     for(int i =0; i<d;i++){
         a = abs(x[i] - s_numbers[i]);
         a = floor(a/w);
-        a = a*pow(this -> m, d-i-1);
-        h = h%M + a%M;
+        cout << a << endl;
+        //a = a*pow(this -> m, d-i-1);
+        int mprev = m;
+        int mpow = 0;
+        if(a != 0){
+            for(int j=0;j<d-i-1;j++){
+                mpow = ((mprev%M)*(m%M))%M;
+                mprev = mpow;
+            }
+        }    
+        a = a%M*mpow;
+        h = (h%M + a%M)%M;
     }
-    h = h%M;
     return h;
 }
 
@@ -92,8 +102,15 @@ HashTable::~HashTable(){
     delete[] bucketArray;
 }
 
-int HashTable::ghash(){
-    cout << "g concat under construction!" << endl;
-    return 0;
+int HashTable::ghash(unsigned char * image){
+    int shift = floor(32/numberOfHashFuncs);
+    int concat = 0;
+    int hash = 0;
+    for(int i =0; i< numberOfHashFuncs;i++){
+        hash = hashFunctions[i]->hash(image);
+        cout<<hash<<endl;
+        concat = (concat << shift) | hash;
+    }
+    return concat;
 }
 

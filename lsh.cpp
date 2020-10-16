@@ -127,14 +127,18 @@ int main(int argc, char** argv){
 
             int bucketsNumber = floor(trainSet.getNumberOfImages()/16);
 
-            int W = 3*R;////Ti W
+            int W = 768*R;////Ti W
 
             HashTable** hashTables= new HashTable*[L];
             
             for(int i= 0; i < L;i++){
                 hashTables[i] = new HashTable(trainSet.getNumberOfPixels(),bucketsNumber, K,W);    
             }
-
+            // for(int i = 0; i < 2;i++){
+                //if(hashTables[0]->ghash(trainSet.imageAt(0)) > 0){
+            cout << hashTables[0]->ghash(trainSet.imageAt(0)) << endl;
+                // }
+            // }
             //////////////////////////////////////////////////////////////////
             for(int i= 0; i < L;i++){
                 delete hashTables[i];

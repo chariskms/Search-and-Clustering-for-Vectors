@@ -40,6 +40,6 @@ class HashTable{
         int getnumberOfHashFuncs() {return numberOfHashFuncs;}
         HashFunction** getHashFunctions(){return hashFunctions;}
         Bucket** getBucketArray(){return bucketArray;}
-        int ghash();
+        int ghash(unsigned char *);
 };        
 

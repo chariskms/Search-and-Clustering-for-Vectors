@@ -9,16 +9,11 @@
 using namespace std;
 
 // class HashFunction
-HashFunction::HashFunction(int d, int w, int k = 1){
-    this -> d = d;
-    this -> w = w;
-    this -> k = k;
-    this -> M = pow(2, floor(32/(this -> k)));
-    this -> m = pow(2, 32 - 3);
+HashFunction::HashFunction(int d, int w, int k = 1): d(d), w(w), k(k){
+    this->M = pow(2, floor(32/k));
+    this->m = rand() % M/2; //check this
     s_numbers = new int[d];
-
-    srand (time(NULL));
-    for(int i = 0;i < d;i++){
+    for(int i=0; i<d; i++){
         s_numbers[i] = rand() % w;
     }
 }
@@ -28,25 +23,25 @@ HashFunction::~HashFunction(){
 }
 
 int HashFunction::hash(unsigned char* x){
-    int h=0, a=0;
-    float tmp;
+    int h=0, a=0, start_m=m;
 
-    for(int i =0; i<d;i++){
-        // a = ((int)x[i]) - s_numbers[i];
-        // a = floor((double)a/w);
+    for(int i=0; i<d; i++){
         a = floor((double)(((int)x[i]) - s_numbers[i])/w);
-        //a = a*pow(this -> m, d-i-1);
-        cout << "a is: " << a << endl;
-        int mprev = m;
-        int mpow = 0;
-        if(a != 0){
-            for(int j=0;j<d-i-1;j++){
-                mpow = ((mprev%M)*(m%M))%M;
-                mprev = mpow;
-            }
+        // int mprev = m;
+        // int mpow = 0;
+        // if(a != 0){
+        //     for(int j=0; j<d-i-1; j++){
+        //         mpow = ((mprev%M)*(m%M))%M;
+        //         mprev = mpow;
+        //     }
+        // }
+        // a = a%M*mpow;
+        // h = (h%M + a%M)%M;
+        if(i>0){
+            h+=(m*a)%M;
+            m=m*start_m;
         }
-        a = a%M*mpow;
-        h = (h%M + a%M)%M;
+        else h+=a%M;
     }
     return h;
 }
@@ -60,7 +55,7 @@ void Bucket::addImage(unsigned char * image){
     this->images.push_back (image);
 }
 
-unsigned char * Bucket::popBackImage(){
+unsigned char* Bucket::popBackImage(){
     unsigned char * image = NULL;
     if(! this->images.empty()){
         image = this->images.back();
@@ -70,32 +65,23 @@ unsigned char * Bucket::popBackImage(){
 }
 
 // class HashTable
-HashTable::HashTable(int vectorsDimArg, int hashTableSizeArg, int K, int W){
-    this -> vectorsDim = vectorsDimArg;
-    this -> hashTableSize = hashTableSizeArg;
-    this -> numberOfHashFuncs = K;
-    hashFunctions = new HashFunction*[this -> numberOfHashFuncs];
-
-    for(int i=0; i< this -> numberOfHashFuncs; i++){
-        hashFunctions[i] = new HashFunction(vectorsDim, W, this -> numberOfHashFuncs);
+HashTable::HashTable(int v, int hT, int K, int W): vectorsDim(v), hashTableSize(hT), numberOfHashFuncs(K){
+    hashFunctions = new HashFunction*[this->numberOfHashFuncs];
+    for(int i=0; i<this->numberOfHashFuncs; i++){
+        hashFunctions[i] = new HashFunction(vectorsDim, W, this->numberOfHashFuncs);
     }
-
     bucketArray = new Bucket*[hashTableSize];
-    for(int i=0; i< this -> hashTableSize; i++){
+    for(int i=0; i<this->hashTableSize; i++){
         bucketArray[i] = new Bucket(i);
     }
 
 }
 
 HashTable::~HashTable(){
-    for(int i=0; i< this -> numberOfHashFuncs; i++){
-        delete hashFunctions[i];
-    }
+    for(int i=0; i<this->numberOfHashFuncs; i++) delete hashFunctions[i];
     delete[] hashFunctions;
 
-    for(int i=0; i< this -> hashTableSize; i++){
-        delete bucketArray[i];
-    }
+    for(int i=0; i<this->hashTableSize; i++) delete bucketArray[i];
     delete[] bucketArray;
 }
 
@@ -109,4 +95,33 @@ int HashTable::ghash(unsigned char * image){
         concat = (concat << shift) | hash;
     }
     return concat;
+}
+
+void HashTable::ANNsearch(unsigned char * image){
+    // Approximate kNN
+    // Input: query q
+    // Let b ←Null; db ← ∞; initialize k best candidates and distances;
+    // for i from 1 to L do
+    //     for each item p in bucket gi(q) do
+    //         if dist(q, p) < db = k-th best distance then b ← p; db ← dist(q, p)
+    //         end if
+    //         if large number of retrieved items (e.g. > 10L) then return b // optional
+    //         end if
+    //     end for
+    //     return b; k best candidates;
+    // end for
+}
+
+void HashTable::RNGsearch(){
+    // Approximate (r, c) Range search
+    // Input: r, query q
+    //     for i from 1 to L do
+    //         for each item p in bucket gi(q) do
+    //             if dist(q, p) < r then output p
+    //             end if
+    //             if large number of retrieved items (e.g. > 20L) then return // optional
+    //             end if
+    //         end for
+    //     end for
+    // return
 }

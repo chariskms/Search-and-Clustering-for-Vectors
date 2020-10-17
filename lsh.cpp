@@ -43,71 +43,64 @@ int main(int argc, char** argv){
 
             int magicNumber = 0,numberOfImages = 0,numberOfRows = 0,numberOfColumns = 0;
             int numOfpixels;
-            fstream trainInput(d);
 
+            //Open train file
+            fstream trainInput(d);
             if(!trainInput.is_open()){
                 cerr<<"Failed to open input data."<<endl;
                 exit(0);
             }
-
             trainInput.read((char*)&magicNumber, 4);
             trainInput.read((char*)&numberOfImages, 4);
             trainInput.read((char*)&numberOfRows, 4);
             trainInput.read((char*)&numberOfColumns, 4);
 
-            //convert intergers from Big Endian to Little Endian
+            //Convert intergers from Big Endian to Little Endian
             magicNumber = SWAP_INT32(magicNumber);
             numberOfImages = SWAP_INT32(numberOfImages);
             numberOfRows = SWAP_INT32(numberOfRows);
             numberOfColumns = SWAP_INT32(numberOfColumns);
-
             cout << "train magic Number: " << magicNumber << endl;
             cout << "train number Of Images: " << numberOfImages << endl;
             cout << "train number Of Rows: " << numberOfRows << endl;
             cout << "train number Of Columns: " << numberOfColumns << endl;
             cout << endl;
-
             Dataset trainSet(magicNumber, numberOfImages, numberOfColumns, numberOfRows);
-
             trainInput.read((char*)trainSet.imageAt(0), (trainSet.getNumberOfPixels())*(trainSet.getNumberOfImages()));
             trainInput.close();
 
-            //here query input
-
+            //Open query file
             fstream queryInput(q);
             if(!queryInput.is_open()){
                 cerr<<"Failed to open input data."<<endl;
                 exit(0);
             }
-
             queryInput.read((char*)&magicNumber, 4);
             queryInput.read((char*)&numberOfImages, 4);
             queryInput.read((char*)&numberOfRows, 4);
             queryInput.read((char*)&numberOfColumns, 4);
 
-            //convert intergers from Big Endian to Little Endian
+            //Convert intergers from Big Endian to Little Endian
             magicNumber = SWAP_INT32(magicNumber);
             numberOfImages = SWAP_INT32(numberOfImages);
             numberOfRows = SWAP_INT32(numberOfRows);
             numberOfColumns = SWAP_INT32(numberOfColumns);
-
             cout << "query magic Number: " << magicNumber << endl;
             cout << "query number Of Images: " << numberOfImages << endl;
             cout << "query number Of Rows: " << numberOfRows << endl;
             cout << "query number Of Columns: " << numberOfColumns << endl;
-
             Dataset querySet(magicNumber, numberOfImages, numberOfColumns, numberOfRows);
-
             queryInput.read((char*)querySet.imageAt(0), (querySet.getNumberOfPixels())*(querySet.getNumberOfImages()));
             queryInput.close();
-            ////////////structure test///////////////////////////////////////////////////////////////////
+
+
+            ///////////////////////////////////////structure test///////////////////////////////////////
             int bucketsNumber = floor(trainSet.getNumberOfImages()/16);
+            int W = 4000*R;
+            srand(time(NULL));
 
-            int W = 768*R;////Ti W
-
-            HashTable** hashTables= new HashTable*[L];
-
-            for(int i= 0; i < L;i++){
+            HashTable **hashTables = new HashTable*[L];
+            for(int i=0; i<L; i++){
                 hashTables[i] = new HashTable(trainSet.getNumberOfPixels(),bucketsNumber, K,W);
             }
             // for(int i = 0; i < 2;i++){
@@ -115,11 +108,12 @@ int main(int argc, char** argv){
             cout << "in main: "<< hashTables[0]->ghash(trainSet.imageAt(0)) << endl;
                 // }
             // }
-            //////////////////////////////////////////////////////////////////
-            for(int i= 0; i < L;i++){
-                delete hashTables[i];
-            }
+            // hashTables[0]->ANNsearch(trainSet.imageAt(0));
+
+            for(int i=0; i<L; i++) delete hashTables[i];
             delete[] hashTables;
+            ///////////////////////////////////////structure test///////////////////////////////////////
+
 
             /* PROGRAM ENDS HERE */
             exec_time = (double)(clock() - tStart)/CLOCKS_PER_SEC;

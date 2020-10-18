@@ -10,8 +10,9 @@ using namespace std;
 
 // class HashFunction
 HashFunction::HashFunction(int d, int w, int k = 1): d(d), w(w), k(k){
+    srand(time(NULL));
     this->M = pow(2, floor(32/k));
-    this->m = rand() % M/2; //check this
+    this->m = rand() % (M/2);   //maxi ai < m < M/2
     s_numbers = new int[d];
     for(int i=0; i<d; i++){
         s_numbers[i] = rand() % w;
@@ -24,26 +25,15 @@ HashFunction::~HashFunction(){
 
 int HashFunction::hash(unsigned char* x){
     int h=0, a=0, start_m=m;
-
     for(int i=0; i<d; i++){
-        a = floor((double)(((int)x[i]) - s_numbers[i])/w);
-        // int mprev = m;
-        // int mpow = 0;
-        // if(a != 0){
-        //     for(int j=0; j<d-i-1; j++){
-        //         mpow = ((mprev%M)*(m%M))%M;
-        //         mprev = mpow;
-        //     }
-        // }
-        // a = a%M*mpow;
-        // h = (h%M + a%M)%M;
+        a = floor((double)(((int)x[d-i-1]) - s_numbers[d-i-1])/w);
         if(i>0){
-            h+=(m*a)%M;
-            m=m*start_m;
+            h+=((m%M)*((a%M+M)%M))%M;
+            m=((m%M)*(start_m%M))%M;    //m=((mprev%M)*(m%M))%M;
         }
-        else h+=a%M;
+        else h+=(a%M);
     }
-    return h;
+    return h%M;
 }
 
 // class Bucket
@@ -87,11 +77,12 @@ HashTable::~HashTable(){
 
 int HashTable::ghash(unsigned char * image){
     int shift = floor(32/numberOfHashFuncs);
-    int concat = 0;
+    int concat = hashFunctions[0]->hash(image);
+    cout << "h_0(x): " << concat << endl;
     int hash = 0;
-    for(int i =0; i< numberOfHashFuncs;i++){
+    for(int i=1; i<numberOfHashFuncs; i++){
         hash = hashFunctions[i]->hash(image);
-        cout << "in ghash: " << hash << endl;
+        cout << "h_" << i << "(x): " << hash << endl;
         concat = (concat << shift) | hash;
     }
     return concat;

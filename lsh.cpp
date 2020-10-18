@@ -97,7 +97,6 @@ int main(int argc, char** argv){
             ///////////////////////////////////////structure test///////////////////////////////////////
             int bucketsNumber = floor(trainSet.getNumberOfImages()/16);
             int W = 4000*R;
-            srand(time(NULL));
 
             HashTable **hashTables = new HashTable*[L];
             for(int i=0; i<L; i++){
@@ -105,7 +104,8 @@ int main(int argc, char** argv){
             }
             // for(int i = 0; i < 2;i++){
                 //if(hashTables[0]->ghash(trainSet.imageAt(0)) > 0){
-            cout << "in main: "<< hashTables[0]->ghash(trainSet.imageAt(0)) << endl;
+            int ghash_returned = hashTables[0]->ghash(trainSet.imageAt(0));
+            cout << "ghash_returned: "<< ghash_returned << endl;
                 // }
             // }
             // hashTables[0]->ANNsearch(trainSet.imageAt(0));

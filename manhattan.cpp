@@ -1,5 +1,5 @@
 #include <stdlib.h> 
-
+#include "manhattan.h"
 int manhattan(unsigned char* x, unsigned char* y, int d){
     int sum = 0;
     for(int i=0; i < d; i++){

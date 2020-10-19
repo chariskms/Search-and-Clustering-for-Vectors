@@ -23,6 +23,7 @@ class Bucket{
         Bucket(int);
         void addImage(unsigned char *);
         unsigned char *popBackImage();
+        std::vector<unsigned char *>* getImageList(){return &images;}
 };
 
 class HashTable{
@@ -35,9 +36,11 @@ class HashTable{
     public:
         HashTable(int, int, int, int);
         ~HashTable();
+        int getvectorsDim() {return vectorsDim;}
         int getnumberOfHashFuncs() {return numberOfHashFuncs;}
         HashFunction** getHashFunctions(){return hashFunctions;}
         Bucket** getBucketArray(){return bucketArray;}
+        
         int ghash(unsigned char *);
         void ANNsearch(unsigned char *);
         void RNGsearch();

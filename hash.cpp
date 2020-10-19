@@ -43,6 +43,7 @@ Bucket::Bucket(int value){
     bucketValue = value;
 }
 
+
 void Bucket::addImage(unsigned char * image){
     this->images.push_back (image);
 }
@@ -90,31 +91,4 @@ int HashTable::ghash(unsigned char * image){
     return concat;
 }
 
-void HashTable::ANNsearch(unsigned char * image){
-    // Approximate kNN
-    // Input: query q
-    // Let b ←Null; db ← ∞; initialize k best candidates and distances;
-    // for i from 1 to L do
-    //     for each item p in bucket gi(q) do
-    //         if dist(q, p) < db = k-th best distance then b ← p; db ← dist(q, p)
-    //         end if
-    //         if large number of retrieved items (e.g. > 10L) then return b // optional
-    //         end if
-    //     end for
-    //     return b; k best candidates;
-    // end for
-}
 
-void HashTable::RNGsearch(){
-    // Approximate (r, c) Range search
-    // Input: r, query q
-    //     for i from 1 to L do
-    //         for each item p in bucket gi(q) do
-    //             if dist(q, p) < r then output p
-    //             end if
-    //             if large number of retrieved items (e.g. > 20L) then return // optional
-    //             end if
-    //         end for
-    //     end for
-    // return
-}

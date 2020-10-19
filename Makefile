@@ -1,7 +1,7 @@
 CXX = g++
 all: lsh cube
 lsh:
-	$(CXX) -o lsh lsh.cpp dataset.cpp hash.cpp manhattan.cpp
+	$(CXX) -o lsh lsh.cpp dataset.cpp hash.cpp manhattan.cpp algorithms.cpp
 cube:
 	$(CXX) -o cube cube.cpp dataset.cpp
 run_lsh:

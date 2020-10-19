@@ -4,18 +4,20 @@
 #include <vector>
 #include <iostream>
 #include <stdlib.h>
+#include <random>
 #include "hash.h"
 
 using namespace std;
 
 // class HashFunction
 HashFunction::HashFunction(int d, int w, int k = 1): d(d), w(w), k(k){
-    srand(time(NULL));
+    static default_random_engine generator;
+    uniform_int_distribution<int> distribution(0,w-1);
     this->M = pow(2, floor(32/k));
-    this->m = rand() % (M/2);   //maxi ai < m < M/2
+    this->m = (M/2-10);   //maxi ai < m < M/2
     s_numbers = new int[d];
     for(int i=0; i<d; i++){
-        s_numbers[i] = rand() % w;
+        s_numbers[i] = distribution(generator);
     }
 }
 

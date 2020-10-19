@@ -41,6 +41,7 @@ void ANNsearch(unsigned char *image){
     //     end for
     //     return b; k best candidates;
     // end for
+
 }
 
 void RNGsearch(int R,int L, Dataset* query, HashTable** hashTables){

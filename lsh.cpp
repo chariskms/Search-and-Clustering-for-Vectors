@@ -107,17 +107,12 @@ int main(int argc, char** argv){
             HashTable **hashTables = new HashTable*[L];
             for(int i=0; i<L; i++){
                 hashTables[i] = new HashTable(trainSet.getNumberOfPixels(),bucketsNumber, K,W);
+                for(int j=0; j<img; j++){
+                    int g_hash = hashTables[i]->ghash(trainSet.imageAt(j));
+                    hashTables[i]->getBucketArray()[g_hash%bucketsNumber]->addImage(trainSet.imageAt(j));
+                }
             }
-            // for(int i = 0; i < 2;i++){
-                //if(hashTables[0]->ghash(trainSet.imageAt(0)) > 0){
-            int ghash_returned = hashTables[0]->ghash(trainSet.imageAt(0));
-            cout << "0)ghash_returned: "<< ghash_returned << endl;
-            ghash_returned = hashTables[0]->ghash(trainSet.imageAt(1));
-            cout << "1)ghash_returned: "<< ghash_returned << endl;
-            ghash_returned = hashTables[0]->ghash(trainSet.imageAt(2));
-            cout << "2)ghash_returned: "<< ghash_returned << endl;
-                // }
-            // }
+
             // hashTables[0]->ANNsearch(trainSet.imageAt(0));
 
             for(int i=0; i<L; i++) delete hashTables[i];

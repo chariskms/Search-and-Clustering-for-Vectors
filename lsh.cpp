@@ -42,7 +42,7 @@ int main(int argc, char** argv){
             /* PROGRAM STARTS HERE */
             clock_t tStart = clock();
 
-            int magicNumber = 0,numberOfImages = 0,numberOfRows = 0,numberOfColumns = 0;
+            int magicNumber = 0,numberOfImages = 0,numberOfRows = 0,numberOfColumns = 0, img=0;
             int numOfpixels;
 
             //Open train file
@@ -69,6 +69,8 @@ int main(int argc, char** argv){
             Dataset trainSet(magicNumber, numberOfImages, numberOfColumns, numberOfRows);
             trainInput.read((char*)trainSet.imageAt(0), (trainSet.getNumberOfPixels())*(trainSet.getNumberOfImages()));
             trainInput.close();
+
+            img = numberOfImages;
 
             //Open query file
             fstream queryInput(q);
@@ -97,7 +99,10 @@ int main(int argc, char** argv){
 
             ///////////////////////////////////////structure test///////////////////////////////////////
             int bucketsNumber = floor(trainSet.getNumberOfImages()/16);
-            int W = 4000*R;
+
+            // int W = FindW(img, &trainSet);
+            // cout << "W is " << W << endl;
+            int W = 33000;
 
             HashTable **hashTables = new HashTable*[L];
             for(int i=0; i<L; i++){
@@ -106,7 +111,11 @@ int main(int argc, char** argv){
             // for(int i = 0; i < 2;i++){
                 //if(hashTables[0]->ghash(trainSet.imageAt(0)) > 0){
             int ghash_returned = hashTables[0]->ghash(trainSet.imageAt(0));
-            cout << "ghash_returned: "<< ghash_returned << endl;
+            cout << "0)ghash_returned: "<< ghash_returned << endl;
+            ghash_returned = hashTables[0]->ghash(trainSet.imageAt(1));
+            cout << "1)ghash_returned: "<< ghash_returned << endl;
+            ghash_returned = hashTables[0]->ghash(trainSet.imageAt(2));
+            cout << "2)ghash_returned: "<< ghash_returned << endl;
                 // }
             // }
             // hashTables[0]->ANNsearch(trainSet.imageAt(0));

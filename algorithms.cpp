@@ -7,7 +7,28 @@
 #include "manhattan.h"
 
 using namespace std;
-void ANNsearch(unsigned char * image){
+
+int FindW(int samples, Dataset *set){
+    int sum=0, min, tmp;
+    int d = set->dimension(), img = set->getNumberOfImages();
+    for(int i=0; i<samples; i++){
+        min=0;
+        cout << i << "/" << samples << endl;
+        for(int j=0; j<img; j++){
+            if(i!=j){
+                if(min!=0){
+                    tmp = manhattan(set->imageAt(i), set->imageAt(j), d);
+                    if(tmp<min) min = tmp;
+                }
+                else min = manhattan(set->imageAt(i), set->imageAt(j), d);
+            }
+        }
+        sum+=min;
+    }
+    return sum/samples;
+}
+
+void ANNsearch(unsigned char *image){
     // Approximate kNN
     // Input: query q
     // Let b ←Null; db ← ∞; initialize k best candidates and distances;
@@ -44,6 +65,6 @@ void RNGsearch(int R,int L, Dataset* query, HashTable** hashTables){
             if(manhattan(*it, q, hashTables[i] ->getvectorsDim()) < R){
                 cout << "Found one item" << endl;
             }
-        }    
-    }    
+        }
+    }
 }

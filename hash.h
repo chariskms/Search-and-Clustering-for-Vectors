@@ -1,6 +1,10 @@
 #include <vector>
 #include <iostream>
 #include <stdlib.h>
+
+int modulo(int a, int m);
+int modular_exponentiation(int x, int y, int z);
+
 class HashFunction{
     int *s_numbers;
     int d; //d diastasi
@@ -13,6 +17,7 @@ class HashFunction{
         HashFunction(int, int, int);
         ~HashFunction();
         int hash(unsigned char*);
+        int getM(){ return M; }
 };
 
 class Bucket{
@@ -40,7 +45,7 @@ class HashTable{
         int getnumberOfHashFuncs() {return numberOfHashFuncs;}
         HashFunction** getHashFunctions(){return hashFunctions;}
         Bucket** getBucketArray(){return bucketArray;}
-        
+
         int ghash(unsigned char *);
         void ANNsearch(unsigned char *);
         void RNGsearch();

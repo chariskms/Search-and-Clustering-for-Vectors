@@ -1,0 +1,23 @@
+train magic Number: 2051
+train number Of Images: 60000
+train number Of Rows: 28
+train number Of Columns: 28
+
+query magic Number: 2051
+query number Of Images: 10000
+query number Of Rows: 28
+query number Of Columns: 28
+h_0(x): 366
+h_1(x): 366
+h_2(x): 366
+0)ghash_returned: 384153966
+h_0(x): 366
+h_1(x): 366
+h_2(x): 366
+1)ghash_returned: 384153966
+h_0(x): 366
+h_1(x): 366
+h_2(x): 366
+2)ghash_returned: 384153966
+
+Execution time is: 0.09375

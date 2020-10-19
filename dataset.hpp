@@ -1,5 +1,4 @@
 class Dataset{
-
     int magicNumber;
     int numberOfImages;
     int numberOfRows;
@@ -8,9 +7,8 @@ class Dataset{
 
     unsigned char* images;
     public:
-        Dataset(int , int , int ,int);
+        Dataset(int, int, int,int);
         ~Dataset();
-
         int getNumberOfRows(){return numberOfRows;};
         int getNumberOfColumns(){return numberOfColumns;};
         int getMagicNumber(){return magicNumber;};
@@ -19,7 +17,7 @@ class Dataset{
         inline unsigned char* imageAt(int index){
             return &images[index*numberOfPixels];
         }
-
-
-
+        inline int dimension(){
+            return numberOfRows*numberOfColumns;
+        }
 };

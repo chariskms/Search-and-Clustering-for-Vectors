@@ -1,0 +1,24 @@
+train magic Number: 2051
+train number Of Images: 60000
+train number Of Rows: 28
+train number Of Columns: 28
+
+query magic Number: 2051
+query number Of Images: 10000
+query number Of Rows: 28
+query number Of Columns: 28
+check if 28933<1.79769e+308
+check if 34553<28933
+check if 29675<28933
+check if 30655<28933
+check if 27386<28933
+check if 31139<27386
+check if 26680<27386
+check if 34017<26680
+check if 23042<26680
+check if 26216<23042
+check if 29834<23042
+check if 28046<23042
+Found item with dist->23042
+
+Execution time is: 6.875

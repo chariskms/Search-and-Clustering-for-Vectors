@@ -2,6 +2,7 @@
 #include <vector>
 #include <iostream>
 #include <stdlib.h>
+#include <cfloat>
 #include "hash.h"
 #include "dataset.hpp"
 #include "manhattan.h"
@@ -9,14 +10,13 @@
 using namespace std;
 
 int FindW(int samples, Dataset *set){
-    int sum=0, min, tmp;
+    double sum=0.0, min, tmp;
     int d = set->dimension(), img = set->getNumberOfImages();
     for(int i=0; i<samples; i++){
-        min=0;
-        cout << i << "/" << samples << endl;
+        min=0.0;
         for(int j=0; j<img; j++){
             if(i!=j){
-                if(min!=0){
+                if(min!=0.0){
                     tmp = manhattan(set->imageAt(i), set->imageAt(j), d);
                     if(tmp<min) min = tmp;
                 }
@@ -28,7 +28,7 @@ int FindW(int samples, Dataset *set){
     return sum/samples;
 }
 
-void ANNsearch(unsigned char *image){
+void ANNsearch(int L, int buckets, unsigned char *q, HashTable** hashTables){
     // Approximate kNN
     // Input: query q
     // Let b ←Null; db ← ∞; initialize k best candidates and distances;
@@ -42,6 +42,26 @@ void ANNsearch(unsigned char *image){
     //     return b; k best candidates;
     // end for
 
+    //add k neighbors
+    int g_hash = 0, j;
+    double min = DBL_MAX, manh=0.0;
+    unsigned char * b = NULL;
+    for(int i=0; i<L; i++){
+        g_hash = hashTables[i]->ghash(q);
+        j=0;
+        vector<unsigned char *>* images = hashTables[i]->getBucketArray()[g_hash%buckets]->getImageList();
+        for (vector<unsigned char *>::iterator it = images->begin() ; it != images->end(); ++it){
+            manh = manhattan(*it, q, hashTables[i]->getvectorsDim());
+            cout << "check if " << manh << "<" << min << endl;
+            if(manh < min){
+                b = *it;
+                min = manh;
+            }
+            if(j>10*L) break;
+            j++;
+        }
+        cout << "Found item with dist->" << min << endl;
+    }
 }
 
 void RNGsearch(int R,int L, Dataset* query, HashTable** hashTables){

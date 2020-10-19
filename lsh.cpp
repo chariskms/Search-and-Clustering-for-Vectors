@@ -113,7 +113,7 @@ int main(int argc, char** argv){
                 }
             }
 
-            // hashTables[0]->ANNsearch(trainSet.imageAt(0));
+            ANNsearch(L, bucketsNumber, querySet.imageAt(0), hashTables);
 
             for(int i=0; i<L; i++) delete hashTables[i];
             delete[] hashTables;

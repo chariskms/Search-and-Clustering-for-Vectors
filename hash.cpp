@@ -86,11 +86,9 @@ int HashTable::ghash(unsigned char *image){
     int shift = floor(32/numberOfHashFuncs);
     int concat = hashFunctions[0]->hash(image);
     int M = hashFunctions[0]->getM();
-    // cout << "h_0(x): " << concat << endl;
     int hash = 0;
     for(int i=1; i<numberOfHashFuncs; i++){
         hash = hashFunctions[i]->hash(image);
-        // cout << "h_" << i << "(x): " << hash << endl;
         concat = (concat << shift) | hash;
     }
     return concat;

@@ -1,3 +1,3 @@
 int FindW(int, Dataset*);
-void ANNsearch(unsigned char *);
+void ANNsearch(int, int, unsigned char*, HashTable**);
 void RNGsearch(int, int, Dataset*, HashTable**);

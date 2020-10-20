@@ -105,6 +105,10 @@ void RNGsearch(int L, int R, unsigned char* q, HashTable** hashTables){
             }    
         }
     }
+    int neighbors_limit = neighbors.size();
+    for(int i=0; i<neighbors_limit; i++){
+        neighbors[i].printNeighbor(i);
+    }
     return;
 }
 

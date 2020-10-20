@@ -105,6 +105,7 @@ int main(int argc, char** argv){
             }
 
             ANNsearch(L, N, querySet.imageAt(0), hashTables);
+            RNGsearch(L, R, querySet.imageAt(0), hashTables);
            
             for(int i=0; i<L; i++) delete hashTables[i];
             delete[] hashTables;

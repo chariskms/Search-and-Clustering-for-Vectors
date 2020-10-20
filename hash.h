@@ -2,12 +2,9 @@
 #include <iostream>
 #include <stdlib.h>
 
-int modulo(int a, int m);
-int modular_exponentiation(int x, int y, int z);
-
 class HashFunction{
     int *s_numbers;
-    int d; //d diastasi
+    int d; //d dimension
     int w; //w window
     int M; //M = 2^(32/k)
     int m; //m = 2^(32-3) ,must m > max_xi

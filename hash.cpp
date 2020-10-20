@@ -48,14 +48,14 @@ Bucket::Bucket(int value){
     bucketValue = value;
 }
 
-void Bucket::addImage(unsigned char * image){
-    this->images.push_back (image);
+void Bucket::addImage(int index,int ghash,unsigned char * image){
+    this->images.push_back (imageInfo(index, ghash, image));
 }
 
-unsigned char* Bucket::popBackImage(){
-    unsigned char * image = NULL;
+imageInfo* Bucket::popBackImage(){
+    imageInfo* image = NULL;
     if(! this->images.empty()){
-        image = this->images.back();
+        image = &(this->images.back());
         this->images.pop_back();
     }
     return image;

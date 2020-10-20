@@ -17,15 +17,26 @@ class HashFunction{
         int getM(){ return M; }
 };
 
+struct imageInfo{
+    int index;
+    int ghash;
+    unsigned char * image;
+
+    public:
+
+    imageInfo(int i, int j, unsigned char * im): index(i), ghash(j), image(im){};
+};
+
 class Bucket{
+    
     int bucketValue;
-    std::vector<unsigned char *> images;
+    std::vector<imageInfo> images;
 
     public:
         Bucket(int);
-        void addImage(unsigned char *);
-        unsigned char *popBackImage();
-        std::vector<unsigned char *>* getImageList(){return &images;}
+        void addImage(int,int,unsigned char *);
+        imageInfo *popBackImage();
+        std::vector<imageInfo>* getImageList(){return &images;}
 };
 
 class HashTable{

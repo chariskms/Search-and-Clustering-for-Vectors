@@ -50,13 +50,13 @@ void ANNsearch(int L, int k, int buckets, unsigned char *q, HashTable** hashTabl
         g_hash = hashTables[i]->ghash(q);
         j=0;
         min = DBL_MAX;
-        vector<unsigned char *>* images = hashTables[i]->getBucketArray()[g_hash%buckets]->getImageList();
-        for (vector<unsigned char *>::iterator it = images->begin() ; it != images->end(); ++it){
-            manh = manhattan(*it, q, hashTables[i]->getvectorsDim());
+        vector<imageInfo>* images = hashTables[i] ->getBucketArray()[g_hash%buckets] -> getImageList();
+        for (vector<imageInfo>::iterator it = images->begin() ; it != images->end(); ++it){
+            manh = manhattan((*it).image, q, hashTables[i]->getvectorsDim());
             if(manh < min){
                 min = manh;
-                truedist = truedistance(*it, q, hashTables[i]->getvectorsDim());
-                neighbors.push_back(Neighbor(i, min, truedist, *it));
+                truedist = truedistance((*it).image, q, hashTables[i]->getvectorsDim());
+                neighbors.push_back(Neighbor((*it).ghash, min, truedist, (*it).image));
             }
             if(j>15*L) break;
             j++;
@@ -71,7 +71,7 @@ void ANNsearch(int L, int k, int buckets, unsigned char *q, HashTable** hashTabl
     }
 }
 
-void RNGsearch(int R,int L, Dataset* query, HashTable** hashTables){
+void RNGsearch(int R,int L, unsigned char* q, HashTable** hashTables){
     // Approximate (r, c) Range search
     // Input: r, query q
     //     for i from 1 to L do
@@ -83,18 +83,25 @@ void RNGsearch(int R,int L, Dataset* query, HashTable** hashTables){
     //         end for
     //     end for
     // return
-    unsigned char* q = query->imageAt(0);
-    int bucket = 0;
+    vector<Neighbor> neighbors;
+    double truedist;
+    int bucket = 0, manh = 0, j = 0;
     for(int i= 0; i < L;i++){
         bucket = hashTables[i] ->ghash(q);
-        vector<unsigned char *>* images = hashTables[i] ->getBucketArray()[bucket] -> getImageList();
-        for (vector<unsigned char *>::iterator it = images->begin() ; it != images->end(); ++it){
-            cout << *it << endl;
-            if(manhattan(*it, q, hashTables[i] ->getvectorsDim()) < R){
-                cout << "Found one item" << endl;
+        vector<imageInfo>* images = hashTables[i] ->getBucketArray()[bucket] -> getImageList();
+        for (vector<imageInfo>::iterator it = images->begin() ; it != images->end(); ++it){
+            cout << (*it).image << endl;
+            manh = manhattan((*it).image, q, hashTables[i] ->getvectorsDim());
+            if(manh < R){
+                truedist = truedistance((*it).image, q, hashTables[i]->getvectorsDim());
+                neighbors.push_back(Neighbor((*it).ghash, manh, truedist, (*it).image));
+                
             }
+            if(j>20*L) break;
+            j++;
         }
     }
+    return;
 }
 
 

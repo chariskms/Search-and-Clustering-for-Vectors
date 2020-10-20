@@ -100,7 +100,7 @@ int main(int argc, char** argv){
                 hashTables[i] = new HashTable(trainSet.getNumberOfPixels(),bucketsNumber, K,W);
                 for(int j=0; j<img; j++){
                     int g_hash = hashTables[i]->ghash(trainSet.imageAt(j));
-                    hashTables[i]->getBucketArray()[g_hash%bucketsNumber]->addImage(trainSet.imageAt(j));
+                    hashTables[i]->getBucketArray()[g_hash%bucketsNumber]->addImage(j,g_hash,trainSet.imageAt(j));
                 }
             }
 

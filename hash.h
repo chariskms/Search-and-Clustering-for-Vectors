@@ -49,6 +49,7 @@ class HashTable{
     public:
         HashTable(int, int, int, int);
         ~HashTable();
+        int gethashTableSize() {return hashTableSize;}
         int getvectorsDim() {return vectorsDim;}
         int getnumberOfHashFuncs() {return numberOfHashFuncs;}
         HashFunction** getHashFunctions(){return hashFunctions;}

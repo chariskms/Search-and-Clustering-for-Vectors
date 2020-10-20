@@ -104,8 +104,8 @@ int main(int argc, char** argv){
                 }
             }
 
-            ANNsearch(L, K, bucketsNumber, querySet.imageAt(0), hashTables);
-
+            ANNsearch(L, N, querySet.imageAt(0), hashTables);
+           
             for(int i=0; i<L; i++) delete hashTables[i];
             delete[] hashTables;
             ///////////////////////////////////////structure test///////////////////////////////////////

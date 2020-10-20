@@ -28,7 +28,7 @@ int main(int argc, char** argv){
             if (!strcmp("-R", argv[i])) r = (char*)argv[i+1];   /* -R */
         }
 
-        if(d==NULL || q==NULL){
+        if(d==NULL || q==NULL || o==NULL){
             cout << "You must run the program with parameters(REQUIRED): –d <input file> –q <query file>" << endl;
             cout << "With additional parameters: –k <int> -L <int> -ο <output file> -Ν <number of nearest> -R <radius>" << endl;
             exit(0);
@@ -61,11 +61,6 @@ int main(int argc, char** argv){
             numberOfImages = SWAP_INT32(numberOfImages);
             numberOfRows = SWAP_INT32(numberOfRows);
             numberOfColumns = SWAP_INT32(numberOfColumns);
-            cout << "train magic Number: " << magicNumber << endl;
-            cout << "train number Of Images: " << numberOfImages << endl;
-            cout << "train number Of Rows: " << numberOfRows << endl;
-            cout << "train number Of Columns: " << numberOfColumns << endl;
-            cout << endl;
             Dataset trainSet(magicNumber, numberOfImages, numberOfColumns, numberOfRows);
             trainInput.read((char*)trainSet.imageAt(0), (trainSet.getNumberOfPixels())*(trainSet.getNumberOfImages()));
             trainInput.close();
@@ -76,7 +71,7 @@ int main(int argc, char** argv){
             fstream queryInput(q);
             if(!queryInput.is_open()){
                 cerr<<"Failed to open input data."<<endl;
-                exit(0);
+                return 0;
             }
             queryInput.read((char*)&magicNumber, 4);
             queryInput.read((char*)&numberOfImages, 4);
@@ -88,10 +83,6 @@ int main(int argc, char** argv){
             numberOfImages = SWAP_INT32(numberOfImages);
             numberOfRows = SWAP_INT32(numberOfRows);
             numberOfColumns = SWAP_INT32(numberOfColumns);
-            cout << "query magic Number: " << magicNumber << endl;
-            cout << "query number Of Images: " << numberOfImages << endl;
-            cout << "query number Of Rows: " << numberOfRows << endl;
-            cout << "query number Of Columns: " << numberOfColumns << endl;
             Dataset querySet(magicNumber, numberOfImages, numberOfColumns, numberOfRows);
             queryInput.read((char*)querySet.imageAt(0), (querySet.getNumberOfPixels())*(querySet.getNumberOfImages()));
             queryInput.close();
@@ -113,7 +104,7 @@ int main(int argc, char** argv){
                 }
             }
 
-            ANNsearch(L, bucketsNumber, querySet.imageAt(0), hashTables);
+            ANNsearch(L, K, bucketsNumber, querySet.imageAt(0), hashTables);
 
             for(int i=0; i<L; i++) delete hashTables[i];
             delete[] hashTables;

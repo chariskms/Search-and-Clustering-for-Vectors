@@ -8,13 +8,9 @@
 
 using namespace std;
 
-Dataset::Dataset(int magicNumberArg,int numberOfImagesArg, int numberOfColumnsArg,int numberOfRowsArg){
-    this->numberOfRows = numberOfRowsArg;
-    this->numberOfColumns = numberOfColumnsArg;
-    this->magicNumber = magicNumberArg;
-    this->numberOfImages = numberOfImagesArg;
-    this->numberOfPixels = numberOfColumnsArg*numberOfRowsArg;
-    this->images = new unsigned char[numberOfImagesArg*numberOfPixels];
+Dataset::Dataset(int magic,int imgs, int columns,int rows) : magicNumber(magic), numberOfColumns(columns), numberOfRows(rows), numberOfImages(imgs){
+    this->numberOfPixels = columns*rows;
+    this->images = new unsigned char[imgs*numberOfPixels];
 }
 
 Dataset::~Dataset(){

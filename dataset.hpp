@@ -7,7 +7,7 @@ class Dataset{
 
     unsigned char* images;
     public:
-        Dataset(int, int, int,int);
+        Dataset(int, int, int, int);
         ~Dataset();
         int getNumberOfRows(){return numberOfRows;};
         int getNumberOfColumns(){return numberOfColumns;};

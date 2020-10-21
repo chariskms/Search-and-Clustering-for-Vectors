@@ -14,8 +14,9 @@ HashFunction::HashFunction(int d, int w, int k = 1): d(d), w(w), k(k){
     static default_random_engine generator;
     uniform_int_distribution<int> distribution(0,w-1);
     // uniform_real_distribution<int> distribution(0,w-1);
-    this->M = pow(2, floor(32/k));
-    this->m = 400;    //maxi ai < m < M/2
+    //this->M = pow(2, floor(32/k));
+    this-> M = 1 << (32/k);
+    this->m = 1 << (M/4);    //maxi ai < m < M/2
     s_numbers = new int[d];
     for(int i=0; i<d; i++){
         s_numbers[i] = distribution(generator);
@@ -40,7 +41,9 @@ int HashFunction::hash(unsigned char* x){
         }
         else h+=a;
     }
+    
     return h%M;
+    
 }
 
 // class Bucket
@@ -65,11 +68,13 @@ imageInfo* Bucket::popBackImage(){
 HashTable::HashTable(int v, int hT, int K, int W): vectorsDim(v), hashTableSize(hT), numberOfHashFuncs(K){
     hashFunctions = new HashFunction*[this->numberOfHashFuncs];
     for(int i=0; i<this->numberOfHashFuncs; i++){
+        
         hashFunctions[i] = new HashFunction(vectorsDim, W, this->numberOfHashFuncs);
     }
     bucketArray = new Bucket*[hashTableSize];
     for(int i=0; i<this->hashTableSize; i++){
         bucketArray[i] = new Bucket(i);
+        
     }
 
 }
@@ -82,13 +87,13 @@ HashTable::~HashTable(){
     delete[] bucketArray;
 }
 
-int HashTable::ghash(unsigned char *image){
+unsigned int HashTable::ghash(unsigned char *image){
     int shift = floor(32/numberOfHashFuncs);
-    int concat = hashFunctions[0]->hash(image);
-    int M = hashFunctions[0]->getM();
-    int hash = 0;
+    unsigned int concat = hashFunctions[0]->hash(image);
+    unsigned int M = hashFunctions[0]->getM();
+    unsigned int hash = 0;
     for(int i=1; i<numberOfHashFuncs; i++){
-        hash = hashFunctions[i]->hash(image);
+        unsigned hash = hashFunctions[i]->hash(image);
         concat = (concat << shift) | hash;
     }
     return concat;

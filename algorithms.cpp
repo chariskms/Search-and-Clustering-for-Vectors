@@ -43,7 +43,8 @@ void  ANNsearch(int L, int k, unsigned char *q, HashTable** hashTables){
     //     return b; k best candidates;
     // end for
 
-    int g_hash = 0, j;
+    unsigned int g_hash = 0;
+    int j = 0;
     double min, manh=0.0, truedist=0.0;
     vector<Neighbor> neighbors;
     for(int i=0; i<L; i++){
@@ -52,7 +53,7 @@ void  ANNsearch(int L, int k, unsigned char *q, HashTable** hashTables){
         min = DBL_MAX;
         vector<imageInfo>* images = hashTables[i] ->getBucketArray()[g_hash%(hashTables[i] ->gethashTableSize())] -> getImageList();
         for (vector<imageInfo>::iterator it = images->begin() ; it != images->end(); ++it){
-            if((*it).ghash == g_hash){
+            if((*it).ghash == g_hash){     
                 manh = manhattan((*it).image, q, hashTables[i]->getvectorsDim());
                 if(manh < min){
                     min = manh;
@@ -64,6 +65,8 @@ void  ANNsearch(int L, int k, unsigned char *q, HashTable** hashTables){
             }
         }
     }
+
+    //to drop duplicates
     //print vector
     int neighbors_limit = k;
     if(neighbors.size()<k) neighbors_limit = neighbors.size();
@@ -88,7 +91,8 @@ void RNGsearch(int L, int R, unsigned char* q, HashTable** hashTables){
     // return
     vector<Neighbor> neighbors;
     double truedist;
-    int g_hash = 0, manh = 0, j = 0;
+    unsigned int g_hash = 0;
+    int manh = 0, j = 0;
     for(int i= 0; i < L;i++){
         g_hash = hashTables[i] ->ghash(q);
         vector<imageInfo>* images = hashTables[i] ->getBucketArray()[g_hash%(hashTables[i] ->gethashTableSize())] -> getImageList();

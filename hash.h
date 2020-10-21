@@ -19,7 +19,7 @@ class HashFunction{
 
 struct imageInfo{
     int index;
-    int ghash;
+    unsigned int ghash;
     unsigned char * image;
 
     public:
@@ -55,7 +55,7 @@ class HashTable{
         HashFunction** getHashFunctions(){return hashFunctions;}
         Bucket** getBucketArray(){return bucketArray;}
 
-        int ghash(unsigned char *);
+        unsigned int ghash(unsigned char *);
         void ANNsearch(unsigned char *);
         void RNGsearch();
 };

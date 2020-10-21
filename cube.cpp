@@ -4,6 +4,8 @@
 #include <time.h>
 #include <vector>
 #include <fstream>
+#include "dataset.hpp"
+
 // #include "dataset.hpp"
 #define IMAGESIZE 800
 #define SWAP_INT32(x) (((x) >> 24) | (((x) & 0x00FF0000) >> 8) | (((x) & 0x0000FF00) << 8) | ((x) << 24))
@@ -46,6 +48,53 @@ int main(int argc, char** argv){
             exec_time = (double)(clock() - tStart)/CLOCKS_PER_SEC;
             cout << "Execution time is: "<< exec_time << endl;
         }
+
+        int magicNumber = 0,numberOfImages = 0,numberOfRows = 0,numberOfColumns = 0, img=0;
+        int numOfpixels;
+
+        //Open train file
+        fstream trainInput(d);
+        if(!trainInput.is_open()){
+            cerr<<"Failed to open input data."<<endl;
+            exit(0);
+        }
+        trainInput.read((char*)&magicNumber, 4);
+        trainInput.read((char*)&numberOfImages, 4);
+        trainInput.read((char*)&numberOfRows, 4);
+        trainInput.read((char*)&numberOfColumns, 4);
+
+        //Convert intergers from Big Endian to Little Endian
+        magicNumber = SWAP_INT32(magicNumber);
+        numberOfImages = SWAP_INT32(numberOfImages);
+        numberOfRows = SWAP_INT32(numberOfRows);
+        numberOfColumns = SWAP_INT32(numberOfColumns);
+        Dataset trainSet(magicNumber, numberOfImages, numberOfColumns, numberOfRows);
+        trainInput.read((char*)trainSet.imageAt(0), (trainSet.getNumberOfPixels())*(trainSet.getNumberOfImages()));
+        trainInput.close();
+
+        img = numberOfImages;
+
+        //Open query file
+        fstream queryInput(q);
+        if(!queryInput.is_open()){
+            cerr<<"Failed to open input data."<<endl;
+            return 0;
+        }
+        queryInput.read((char*)&magicNumber, 4);
+        queryInput.read((char*)&numberOfImages, 4);
+        queryInput.read((char*)&numberOfRows, 4);
+        queryInput.read((char*)&numberOfColumns, 4);
+
+        //Convert intergers from Big Endian to Little Endian
+        magicNumber = SWAP_INT32(magicNumber);
+        numberOfImages = SWAP_INT32(numberOfImages);
+        numberOfRows = SWAP_INT32(numberOfRows);
+        numberOfColumns = SWAP_INT32(numberOfColumns);
+        Dataset querySet(magicNumber, numberOfImages, numberOfColumns, numberOfRows);
+        queryInput.read((char*)querySet.imageAt(0), (querySet.getNumberOfPixels())*(querySet.getNumberOfImages()));
+        queryInput.close();
+
+        
 
     }
     else {

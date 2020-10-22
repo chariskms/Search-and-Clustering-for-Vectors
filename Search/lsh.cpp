@@ -98,18 +98,16 @@ int main(int argc, char** argv){
             HashTable **hashTables = new HashTable*[L];
             for(int i=0; i<L; i++){
                 hashTables[i] = new HashTable(trainSet.getNumberOfPixels(),bucketsNumber, K,W);
-                
+
                 for(int j=0; j<img; j++){
                     unsigned int g_hash = (unsigned int)(hashTables[i]->ghash(trainSet.imageAt(j)));
                     hashTables[i]->getBucketArray()[g_hash%bucketsNumber]->addImage(j,g_hash,trainSet.imageAt(j));
                 }
-               
-                
             }
-            
-            ANNsearch(L, N, querySet.imageAt(0), hashTables);
-            RNGsearch(L, R, querySet.imageAt(0), hashTables);
-           
+
+            ANNsearch(L, N, 0, querySet.imageAt(0), &trainSet, hashTables);
+            // RNGsearch(L, R, querySet.imageAt(0), &trainSet, hashTables);
+
             for(int i=0; i<L; i++) delete hashTables[i];
             delete[] hashTables;
             ///////////////////////////////////////structure test///////////////////////////////////////

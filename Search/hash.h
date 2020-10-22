@@ -28,7 +28,7 @@ struct imageInfo{
 };
 
 class Bucket{
-    
+
     int bucketValue;
     std::vector<imageInfo> images;
 
@@ -57,6 +57,6 @@ class HashTable{
         Bucket** getBucketArray(){return bucketArray;}
 
         unsigned int ghash(unsigned char *);
-        void ANNsearch(unsigned char *);
-        void RNGsearch();
+        // void ANNsearch(unsigned char *);
+        // void RNGsearch();
 };

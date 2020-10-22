@@ -1,11 +1,16 @@
 #include <map>
-#include <hash.h>
+#include "hash.h"
 
-class Projection{
-    int bucketDim;
-    std::map<int, bool> hStorage;
+using namespace std;
 
-    Projection(int);
-    int f(HashFunction**);
+class Projection : public HashTable {
+    // int bucketDim;
+    // int vectorsDim;
+    // HashFunction **hashFunctions;
+    map<int, int>* hStorage;
+
+    Projection(int, int, int, int);
+    ~Projection();
+    unsigned int ghash(unsigned char*);
     
 };

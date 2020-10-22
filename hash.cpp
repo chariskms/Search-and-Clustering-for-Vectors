@@ -10,7 +10,7 @@
 using namespace std;
 
 // class HashFunction
-HashFunction::HashFunction(int d, int w, int k = 1): d(d), w(w), k(k){
+HashFunction::HashFunction(int darg, int warg, int karg = 1): d(darg), w(warg), k(karg){
     static default_random_engine generator;
     uniform_int_distribution<int> distribution(0,w-1);
     // uniform_real_distribution<int> distribution(0,w-1);

@@ -116,6 +116,11 @@ void RNGsearch(int L, int R, unsigned char* q, HashTable** hashTables){
     return;
 }
 
+void hypercubeSearch(){
+
+    cout << "hypercube" << endl;
+}
+
 
 Neighbor::Neighbor(int i, double l, double t, unsigned char* img): index(i), lshDist(l), trueDist(t){
     image = img;

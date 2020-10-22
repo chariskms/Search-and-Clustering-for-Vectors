@@ -40,11 +40,12 @@ class Bucket{
 };
 
 class HashTable{
-    int vectorsDim;
-    int hashTableSize;      //n/16 number of buckets
-    int numberOfHashFuncs; //k
-    HashFunction **hashFunctions;
-    Bucket **bucketArray;
+    protected:
+        int vectorsDim;
+        int hashTableSize;      //n/16 number of buckets
+        int numberOfHashFuncs; //k
+        HashFunction **hashFunctions;
+        Bucket **bucketArray;
 
     public:
         HashTable(int, int, int, int);

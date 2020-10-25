@@ -7,7 +7,7 @@
 #include <cmath>
 #include "hash.h"
 #include "dataset.hpp"
-#include "algorithms.h"
+#include "lshAlgorithms.h"
 #define SWAP_INT32(x) (((x) >> 24) | (((x) & 0x00FF0000) >> 8) | (((x) & 0x0000FF00) << 8) | ((x) << 24))
 // ./lsh -d train-images.idx3-ubyte -R 1.0 -q fileq -k 4 -L 5 -o fileo -N 1
 
@@ -31,7 +31,7 @@ int main(int argc, char** argv){
         if(d==NULL || q==NULL || o==NULL){
             cout << "You must run the program with parameters(REQUIRED): –d <input file> –q <query file>" << endl;
             cout << "With additional parameters: –k <int> -L <int> -ο <output file> -Ν <number of nearest> -R <radius>" << endl;
-            return 0;
+            return(0);
         }
         else{
             if (k!=NULL) K = atoi(k);
@@ -49,7 +49,7 @@ int main(int argc, char** argv){
             fstream trainInput(d);
             if(!trainInput.is_open()){
                 cerr<<"Failed to open input data."<<endl;
-                return 0;
+                return(0);
             }
             trainInput.read((char*)&magicNumber, 4);
             trainInput.read((char*)&numberOfImages, 4);

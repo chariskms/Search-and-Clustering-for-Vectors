@@ -5,6 +5,8 @@
 #include <vector>
 #include <fstream>
 #include "dataset.hpp"
+#include "projection.hpp"
+#include "cubeAlgorithms"
 
 // #include "dataset.hpp"
 #define IMAGESIZE 800
@@ -32,7 +34,7 @@ int main(int argc, char** argv){
         if(d==NULL || q==NULL){
             cout << "You must run the program with parameters(REQUIRED): –d <input file> –q <query file>" << endl;
             cout << "With additional parameters: –k <int> -L <int> -ο <output file> -Ν <number of nearest> -R <radius>" << endl;
-            exit(0);
+            return(0);
         }
         else{
             if (k!=NULL) K = atoi(k);
@@ -56,7 +58,7 @@ int main(int argc, char** argv){
         fstream trainInput(d);
         if(!trainInput.is_open()){
             cerr<<"Failed to open input data."<<endl;
-            exit(0);
+            return(0);
         }
         trainInput.read((char*)&magicNumber, 4);
         trainInput.read((char*)&numberOfImages, 4);
@@ -94,7 +96,16 @@ int main(int argc, char** argv){
         queryInput.read((char*)querySet.imageAt(0), (querySet.getNumberOfPixels())*(querySet.getNumberOfImages()));
         queryInput.close();
 
-        
+         int bucketsNumber = pow(2,K);
+
+            // int W = FindW(img, &trainSet);
+            // cout << "W is " << W << endl;
+            int W = 40000;
+
+            maxHam = 2;
+            Projection *projection = new Projection(trainSet.getNumberOfPixels(),bucketsNumber, K,W);
+            hypercubeSearch(R, maxHam, querySet.imageAt(0), &trainSet, projection);
+            
 
     }
     else {

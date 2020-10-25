@@ -1,13 +1,13 @@
 #include <stdlib.h>
 #include <vector>
 #include <iostream>
-#include <stdlib.h>
 #include <cfloat>
 #include <math.h>
-#include "hash.h"
-// #include "dataset.hpp"
+#include "dataset.hpp"
 #include "metrics.h"
-#include "algorithms.h"
+#include "lshAlgorithms.h"
+
+#include "hash.h"
 
 using namespace std;
 
@@ -115,57 +115,6 @@ void RNGsearch(int L, int R, unsigned char* q, Dataset *trainSet, HashTable** ha
     return;
 }
 
-void hammingCombinations(int num, vector<int>* combs,int distRemain){
-    if(distRemain == 0){return;}
-
-    int numLength = (int)log2(num)+1;
-
-    int mask = 0;
-    int newComb = 0;
-    int bit = 0;
-    for(int i = 0; i < numLength; i++){
-        mask = 1 << i;
-        bit = mask & num;
-        if(bit == 0){
-            bit = 1;
-        }else{
-            bit = 0;
-        }
-        newComb = (num & ~mask) | ((bit << i) & mask);
-        if(distRemain == 1){
-            combs -> push_back(newComb);
-        }else{
-            hammingCombinations(newComb, combs,distRemain - 1);
-        }
-    }
-    return;
-}
-
-
-
-void hypercubeSearch(int L, int R, unsigned char* q, Dataset *trainSet, Projection * projection, int maxHam){
-
-    int qhash = projection->ghash(q);
-    qLength = (int)log2(qhash)+1;
-    vector<int> * combs new vector<int>;
-
-    bool stop = false;
-
-    while(dimham < maxham && !stop){
-
-        hammingCombinations(qhash, combs,1, distGoal);
-    }
-
-
-
-    cout << "hypercube" << endl;
-    // 1 Project query point to corresponding hypercube vertex.
-    // 2 Check points in same vertex and nearby vertices in increasing Hamming
-    // distance (=1, then 2, etc), until some threshold reached (next slide).
-    // 3 ANN returns closest candidate, range search all p within query ball.
-
-
-}
 
 
 Neighbor::Neighbor(int i, double l, unsigned char* img): index(i), lshDist(l){

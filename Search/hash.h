@@ -1,3 +1,6 @@
+#ifndef HASH
+#define HASH
+
 #include <vector>
 #include <iostream>
 #include <stdlib.h>
@@ -60,3 +63,5 @@ class HashTable{
         // void ANNsearch(unsigned char *);
         // void RNGsearch();
 };
+
+#endif

@@ -1,3 +1,5 @@
+#ifndef DATASET_HPP
+#define DATASET_HPP
 class Dataset{
     int magicNumber;
     int numberOfImages;
@@ -21,3 +23,4 @@ class Dataset{
             return numberOfRows*numberOfColumns;
         }
 };
+#endif

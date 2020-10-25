@@ -117,7 +117,7 @@ void RNGsearch(int L, int R, unsigned char* q, Dataset *trainSet, HashTable** ha
 
 void hammingCombinations(int num, vector<int>* combs,int distRemain){
     if(distRemain == 0){return;}
-    
+
     int numLength = (int)log2(num)+1;
 
     int mask = 0;
@@ -135,33 +135,29 @@ void hammingCombinations(int num, vector<int>* combs,int distRemain){
         if(distRemain == 1){
             combs -> push_back(newComb);
         }else{
-            hammingCombinations(newComb, combs,distRemain - 1)
-        }    
+            hammingCombinations(newComb, combs,distRemain - 1);
+        }
     }
     return;
 }
 
 
-    
-
-
-}
 
 void hypercubeSearch(int L, int R, unsigned char* q, Dataset *trainSet, Projection * projection, int maxHam){
 
     int qhash = projection->ghash(q);
     qLength = (int)log2(qhash)+1;
-    vector<int> * combs new vector<int>; 
-    
+    vector<int> * combs new vector<int>;
+
     bool stop = false;
 
     while(dimham < maxham && !stop){
-        
-        hammingCombinations(qhash, combs,1, distGoal);
-    }    
 
-    
-    
+        hammingCombinations(qhash, combs,1, distGoal);
+    }
+
+
+
     cout << "hypercube" << endl;
     // 1 Project query point to corresponding hypercube vertex.
     // 2 Check points in same vertex and nearby vertices in increasing Hamming

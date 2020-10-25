@@ -35,16 +35,21 @@ void Centroids::initialize(Dataset *set, int clusters){
     centroids[0] = distribution(generator);
     cout << "c0: " << centroids[0] << endl;
     for(int i=1; i<clusters; i++){
-        cout << "cluster: " << i << endl;
         int sum = 0.0;
         double max = 0.0;
         for(int j=0; j<points; j++){
             //Find minimum D distance between vector and centroid
             double min = DBL_MAX, manh = 0.0;
             for(int k=0; k<i; k++){
-                manh = manhattan(set->imageAt(j), set->imageAt(centroids[k]), set->dimension());
-                if(manh<min) min = manh;
-                if(manh>max) max = manh;
+                if(j != centroids[k]){
+                    manh = manhattan(set->imageAt(j), set->imageAt(centroids[k]), set->dimension());
+                    if(manh<min) min = manh;
+                    if(manh>max) max = manh;
+                }
+                else{
+                    min = 0;
+                    break;
+                }
             }
             DParray[0][j] = min;
         }
@@ -52,28 +57,20 @@ void Centroids::initialize(Dataset *set, int clusters){
             sum+=(DParray[0][j]/max)*DParray[0][j];
             DParray[1][j] = sum;
         }
-        cout << "Array " << DParray[1][points-1] << endl;
         uniform_real_distribution<> distribution(0,DParray[1][points-1]);
         double find_index = distribution(generator);
-        bool found = false;
-        int left = 0, right = points-1, index = 0;
-        //problem
-        while(!found){
-            if(right>=left){
-                index = left+(right-left)/2;
-                if(DParray[1][index]>find_index){
-                    if(index>1){
-                        if(DParray[1][index-1]<=find_index)
-                    }
-                    right = index-1;
+        int j = 1, index = 0;
+        //Find index from random value
+        if(DParray[1][0]>=find_index) index = 0;
+        else{
+            while(j<points){
+                if(DParray[1][j-1]<find_index && DParray[1][j]>=find_index){
+                    index = j;
+                    break;
                 }
-                else if(DParray[1][index]<find_index){
-                    left = index+1;
-                }
-                else found = true;
+                j++;
             }
         }
-        cout << index << endl;
         centroids[i] = index;
         cout << "c" << i << ": " << centroids[i] << endl;
     }

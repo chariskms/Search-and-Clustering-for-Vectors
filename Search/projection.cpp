@@ -30,6 +30,7 @@ unsigned int Projection::ghash(unsigned char * image){
         itr = hStorage[i].find(hash);
         if (itr != hStorage[i].end()){
             bit = itr->second;
+            // cout << "bit" << bit << endl;
         }else{
             bit = binary_distribution(binary_generator);
             hStorage[i].insert(pair<int, int>(hash, bit));

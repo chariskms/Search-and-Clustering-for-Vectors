@@ -4,9 +4,11 @@
 #include <time.h>
 #include <vector>
 #include <fstream>
+#include <math.h>    
 #include "dataset.hpp"
 #include "projection.hpp"
-#include "cubeAlgorithms"
+#include "cubeAlgorithms.h"
+
 
 // #include "dataset.hpp"
 #define IMAGESIZE 800
@@ -46,66 +48,71 @@ int main(int argc, char** argv){
             /* PROGRAM STARTS HERE */
             clock_t tStart = clock();
 
-            /* PROGRAM ENDS HERE */
+            int magicNumber = 0,numberOfImages = 0,numberOfRows = 0,numberOfColumns = 0, img=0;
+            int numOfpixels;
+
+            //Open train file
+            fstream trainInput(d);
+            if(!trainInput.is_open()){
+                cerr<<"Failed to open input data."<<endl;
+                return(0);
+            }
+            trainInput.read((char*)&magicNumber, 4);
+            trainInput.read((char*)&numberOfImages, 4);
+            trainInput.read((char*)&numberOfRows, 4);
+            trainInput.read((char*)&numberOfColumns, 4);
+
+            //Convert intergers from Big Endian to Little Endian
+            magicNumber = SWAP_INT32(magicNumber);
+            numberOfImages = SWAP_INT32(numberOfImages);
+            numberOfRows = SWAP_INT32(numberOfRows);
+            numberOfColumns = SWAP_INT32(numberOfColumns);
+            Dataset trainSet(magicNumber, numberOfImages, numberOfColumns, numberOfRows);
+            trainInput.read((char*)trainSet.imageAt(0), (trainSet.getNumberOfPixels())*(trainSet.getNumberOfImages()));
+            trainInput.close();
+
+            img = numberOfImages;
+
+            //Open query file
+            fstream queryInput(q);
+            if(!queryInput.is_open()){
+                cerr<<"Failed to open input data."<<endl;
+                return 0;
+            }
+            queryInput.read((char*)&magicNumber, 4);
+            queryInput.read((char*)&numberOfImages, 4);
+            queryInput.read((char*)&numberOfRows, 4);
+            queryInput.read((char*)&numberOfColumns, 4);
+
+            //Convert intergers from Big Endian to Little Endian
+            magicNumber = SWAP_INT32(magicNumber);
+            numberOfImages = SWAP_INT32(numberOfImages);
+            numberOfRows = SWAP_INT32(numberOfRows);
+            numberOfColumns = SWAP_INT32(numberOfColumns);
+            Dataset querySet(magicNumber, numberOfImages, numberOfColumns, numberOfRows);
+            queryInput.read((char*)querySet.imageAt(0), (querySet.getNumberOfPixels())*(querySet.getNumberOfImages()));
+            queryInput.close();
+
+            int bucketsNumber = pow(2,K);
+
+                // int W = FindW(img, &trainSet);
+                // cout << "W is " << W << endl;
+            int W = 40000;
+            
+            Projection *projection = new Projection(trainSet.getNumberOfPixels(),bucketsNumber, K,W);
+
+            for(int j=0; j<trainSet.getNumberOfImages(); j++){
+                unsigned int g_hash = (unsigned int)(projection->ghash(trainSet.imageAt(j)));
+                projection->getBucketArray()[g_hash]->addImage(j,g_hash,trainSet.imageAt(j));
+            }
+            cout<<"here"<<endl;
+            for(int i = 0 ;i < 1; i++){
+                hyperCubeSearch(R, probes,i, querySet.imageAt(i), &trainSet, projection);
+            }  
+         /* PROGRAM ENDS HERE */
             exec_time = (double)(clock() - tStart)/CLOCKS_PER_SEC;
             cout << "Execution time is: "<< exec_time << endl;
-        }
-
-        int magicNumber = 0,numberOfImages = 0,numberOfRows = 0,numberOfColumns = 0, img=0;
-        int numOfpixels;
-
-        //Open train file
-        fstream trainInput(d);
-        if(!trainInput.is_open()){
-            cerr<<"Failed to open input data."<<endl;
-            return(0);
-        }
-        trainInput.read((char*)&magicNumber, 4);
-        trainInput.read((char*)&numberOfImages, 4);
-        trainInput.read((char*)&numberOfRows, 4);
-        trainInput.read((char*)&numberOfColumns, 4);
-
-        //Convert intergers from Big Endian to Little Endian
-        magicNumber = SWAP_INT32(magicNumber);
-        numberOfImages = SWAP_INT32(numberOfImages);
-        numberOfRows = SWAP_INT32(numberOfRows);
-        numberOfColumns = SWAP_INT32(numberOfColumns);
-        Dataset trainSet(magicNumber, numberOfImages, numberOfColumns, numberOfRows);
-        trainInput.read((char*)trainSet.imageAt(0), (trainSet.getNumberOfPixels())*(trainSet.getNumberOfImages()));
-        trainInput.close();
-
-        img = numberOfImages;
-
-        //Open query file
-        fstream queryInput(q);
-        if(!queryInput.is_open()){
-            cerr<<"Failed to open input data."<<endl;
-            return 0;
-        }
-        queryInput.read((char*)&magicNumber, 4);
-        queryInput.read((char*)&numberOfImages, 4);
-        queryInput.read((char*)&numberOfRows, 4);
-        queryInput.read((char*)&numberOfColumns, 4);
-
-        //Convert intergers from Big Endian to Little Endian
-        magicNumber = SWAP_INT32(magicNumber);
-        numberOfImages = SWAP_INT32(numberOfImages);
-        numberOfRows = SWAP_INT32(numberOfRows);
-        numberOfColumns = SWAP_INT32(numberOfColumns);
-        Dataset querySet(magicNumber, numberOfImages, numberOfColumns, numberOfRows);
-        queryInput.read((char*)querySet.imageAt(0), (querySet.getNumberOfPixels())*(querySet.getNumberOfImages()));
-        queryInput.close();
-
-         int bucketsNumber = pow(2,K);
-
-            // int W = FindW(img, &trainSet);
-            // cout << "W is " << W << endl;
-            int W = 40000;
-
-            maxHam = 2;
-            Projection *projection = new Projection(trainSet.getNumberOfPixels(),bucketsNumber, K,W);
-            hypercubeSearch(R, maxHam, querySet.imageAt(0), &trainSet, projection);
-            
+        }  
 
     }
     else {

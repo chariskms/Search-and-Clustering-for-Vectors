@@ -51,7 +51,7 @@ class HashTable{
         Bucket **bucketArray;
 
     public:
-        HashTable(int, int, int, int);
+        HashTable(int, int, int, int,HashFunction**);
         ~HashTable();
         int gethashTableSize() {return hashTableSize;}
         int getvectorsDim() {return vectorsDim;}

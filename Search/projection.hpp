@@ -13,7 +13,7 @@ class Projection : public HashTable {
     // HashFunction **hashFunctions;
     map<int, int>* hStorage;
     public:
-        Projection(int, int, int, int);
+        Projection(int, int, int, int, HashFunction**);
         ~Projection();
         unsigned int ghash(unsigned char*);
     

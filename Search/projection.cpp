@@ -3,7 +3,7 @@
 
 using namespace std;
 
-Projection::Projection(int vectordim,int numberOfBuckets, int projdim, int W): HashTable(vectordim,numberOfBuckets,projdim,W){
+Projection::Projection(int vectordim,int numberOfBuckets, int projdim, int W, HashFunction** hashFamily): HashTable(vectordim,numberOfBuckets,projdim,W,hashFamily){
     
     // hashFunctions = new HashFunction*[this->bucketDim];
     // for(int i=0; i<this->bucketDim; i++){
@@ -17,8 +17,8 @@ Projection::~Projection(){
 }
 
 unsigned int Projection::ghash(unsigned char * image){
-
-    static default_random_engine binary_generator;
+    random_device randf;
+    static default_random_engine binary_generator(randf());
     uniform_int_distribution<int> binary_distribution(0,1);
     
     int result = 0;

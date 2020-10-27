@@ -94,6 +94,10 @@ int main(int argc, char** argv){
             // int W = FindW(img, &trainSet);
             // cout << "W is " << W << endl;
             int W = 40000;
+            HashFunction** hashFamily = new HashFunction*[trainSet.getNumberOfPixels()];
+            for(int i = 0; i < trainSet.getNumberOfPixels();i++){
+                hashFamily[i] = NULL;
+            }
 
             HashTable **hashTables = new HashTable*[L];
             for(int i=0; i<L; i++){
@@ -108,6 +112,12 @@ int main(int argc, char** argv){
             ANNsearch(L, N, 0, querySet.imageAt(0), &trainSet, hashTables);
             // RNGsearch(L, R, querySet.imageAt(0), &trainSet, hashTables);
 
+            for(int i=0; i<trainSet.getNumberOfPixels(); i++){
+                if(hashFamily[i]!=NULL){
+                    delete hashFamily[i];
+                }    
+            } 
+            delete[] hashFamily;
             for(int i=0; i<L; i++) delete hashTables[i];
             delete[] hashTables;
             ///////////////////////////////////////structure test///////////////////////////////////////

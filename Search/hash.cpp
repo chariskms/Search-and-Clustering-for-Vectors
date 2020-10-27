@@ -11,7 +11,8 @@ using namespace std;
 
 // class HashFunction
 HashFunction::HashFunction(int darg, int warg, int karg = 1): d(darg), w(warg), k(karg){
-    static default_random_engine generator;
+    random_device randf;
+    static default_random_engine generator(randf());
     uniform_int_distribution<int> distribution(0,w-1);
     // uniform_real_distribution<int> distribution(0,w-1);
     //this->M = pow(2, floor(32/k));
@@ -65,11 +66,22 @@ imageInfo* Bucket::popBackImage(){
 }
 
 // class HashTable
-HashTable::HashTable(int v, int hT, int K, int W): vectorsDim(v), hashTableSize(hT), numberOfHashFuncs(K){
+HashTable::HashTable(int v, int hT, int K, int W, HashFunction** hashFamily): vectorsDim(v), hashTableSize(hT), numberOfHashFuncs(K){
+    random_device randf;
+    static default_random_engine generator3(randf());
+
     hashFunctions = new HashFunction*[this->numberOfHashFuncs];
+    int rand = 0;
+    
+    uniform_int_distribution<int> distribution3(0,v-1);
     for(int i=0; i<this->numberOfHashFuncs; i++){
-        
-        hashFunctions[i] = new HashFunction(vectorsDim, W, this->numberOfHashFuncs);
+        //Choose randomly the ith hash function
+        rand = distribution3(generator3);
+        if(hashFamily[rand] == NULL){
+            hashFamily[rand] = new HashFunction(vectorsDim, W, this->numberOfHashFuncs);
+        }
+        hashFunctions[i] = hashFamily[rand];
+        //hashFunctions[i] = new HashFunction(vectorsDim, W, this->numberOfHashFuncs);
     }
     bucketArray = new Bucket*[hashTableSize];
     for(int i=0; i<this->hashTableSize; i++){
@@ -80,7 +92,7 @@ HashTable::HashTable(int v, int hT, int K, int W): vectorsDim(v), hashTableSize(
 }
 
 HashTable::~HashTable(){
-    for(int i=0; i<this->numberOfHashFuncs; i++) delete hashFunctions[i];
+    // for(int i=0; i<this->numberOfHashFuncs; i++) delete hashFunctions[i];
     delete[] hashFunctions;
 
     for(int i=0; i<this->hashTableSize; i++) delete bucketArray[i];

@@ -98,8 +98,13 @@ int main(int argc, char** argv){
                 // int W = FindW(img, &trainSet);
                 // cout << "W is " << W << endl;
             int W = 40000;
-            
-            Projection *projection = new Projection(trainSet.getNumberOfPixels(),bucketsNumber, K,W);
+
+            HashFunction** hashFamily = new HashFunction*[trainSet.getNumberOfPixels()];
+            for(int i = 0; i < trainSet.getNumberOfPixels();i++){
+                hashFamily[i] = NULL;
+            }
+
+            Projection *projection = new Projection(trainSet.getNumberOfPixels(),bucketsNumber, K,W, hashFamily);
 
             for(int j=0; j<trainSet.getNumberOfImages(); j++){
                 unsigned int g_hash = (unsigned int)(projection->ghash(trainSet.imageAt(j)));
@@ -109,6 +114,13 @@ int main(int argc, char** argv){
             for(int i = 0 ;i < 1; i++){
                 hyperCubeSearch(R, probes,i, querySet.imageAt(i), &trainSet, projection);
             }  
+
+            for(int i=0; i<trainSet.getNumberOfPixels(); i++){
+                if(hashFamily[i]!=NULL){
+                    delete hashFamily[i];
+                }    
+            } 
+            delete[] hashFamily;
          /* PROGRAM ENDS HERE */
             exec_time = (double)(clock() - tStart)/CLOCKS_PER_SEC;
             cout << "Execution time is: "<< exec_time << endl;

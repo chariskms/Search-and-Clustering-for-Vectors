@@ -3,10 +3,33 @@
 class Centroids{
     double **DParray;
     int *centroids;
-    int points;
+    int numpoints;
+    int numclusters;
+    Dataset *set;
 
     public:
-        Centroids(int, int);
+        Centroids(int, int, Dataset*);
         ~Centroids();
-        void initialize(Dataset*, int);
+        double** getDParray() { return DParray; }
+        int* getCentroids() { return centroids; }
+        int getNumClusters() { return numclusters; }
+        int getNumPoints() { return numpoints; }
+        Dataset* getSet() { return set; }
+        double minmaxDist(int, unsigned char*);
+        void Initialize();
+};
+
+class Clusters{
+    Centroids *Cntrds;
+    std::vector<std::vector<unsigned char>> CntrdsVectors;
+    std::vector<std::vector<int>> images;
+
+    public:
+        Clusters(Centroids*);
+        void Clustering(char*, char*, bool);
+        void Update();
+        void Lloyds();
+        void Silhouette();
+        void Output(char*, char*, bool);
+        ~Clusters();
 };

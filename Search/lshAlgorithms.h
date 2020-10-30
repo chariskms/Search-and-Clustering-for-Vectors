@@ -1,6 +1,7 @@
 #ifndef ALGO
 #define ALGO
 
+#include <vector>
 #include "hash.h"
 #include "dataset.hpp"
 
@@ -17,8 +18,9 @@ class Neighbor{
 };
 
 int FindW(int, Dataset*);
-void ANNsearch(int, int, int, unsigned char*, Dataset*, HashTable**);
-void RNGsearch(int, int, unsigned char*, Dataset*, HashTable**);
+void ANNsearch(std::vector<Neighbor>&,int, int, int, unsigned char*, Dataset*, HashTable**);
+void RNGsearch(std::vector<Neighbor>&,int, int, int, unsigned char*, Dataset*, HashTable**);
+void trueDistance(std::vector<double>&, int, int, unsigned char *, Dataset *, HashTable**);
 
 
 

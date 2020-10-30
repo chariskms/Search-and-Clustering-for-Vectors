@@ -101,7 +101,7 @@ int main(int argc, char** argv){
 
             HashTable **hashTables = new HashTable*[L];
             for(int i=0; i<L; i++){
-                hashTables[i] = new HashTable(trainSet.getNumberOfPixels(),bucketsNumber, K,W);
+                hashTables[i] = new HashTable(trainSet.getNumberOfPixels(),bucketsNumber, K,W,hashFamily);
 
                 for(int j=0; j<img; j++){
                     unsigned int g_hash = (unsigned int)(hashTables[i]->ghash(trainSet.imageAt(j)));
@@ -109,8 +109,43 @@ int main(int argc, char** argv){
                 }
             }
 
-            ANNsearch(L, N, 0, querySet.imageAt(0), &trainSet, hashTables);
-            // RNGsearch(L, R, querySet.imageAt(0), &trainSet, hashTables);
+
+            for(int index = 0; index < 10;index++){
+                vector<Neighbor> ANNneighbors;
+                vector<Neighbor> RNGneighbors;
+                vector<double> ANNtrueDist;
+                vector<double> RNGtrueDist;
+
+                ANNsearch(ANNneighbors,L, N, index, querySet.imageAt(index), &trainSet, hashTables);
+                trueDistance(ANNtrueDist, 0,index, querySet.imageAt(index), &trainSet,hashTables);
+
+
+                RNGsearch(RNGneighbors, L, R, index, querySet.imageAt(index),&trainSet, hashTables);
+                trueDistance(RNGtrueDist, R,index, querySet.imageAt(index), &trainSet,hashTables);
+
+                int j = ANNtrueDist.size()-1;
+                int printi = 1;
+                cout << "Query: " << index << endl;
+                if(ANNneighbors.size() > ANNneighbors.size()-1-N){
+                    for(int i=ANNneighbors.size()-1; i>ANNneighbors.size()-1-N; i--){
+                        if(j>=0) ANNneighbors[i].printNeighbor(printi, ANNtrueDist[j]);
+                        j--;
+                        printi++;
+                    }
+                    cout << "tLSH: " << 0.0 << endl;
+                    cout << "tTrue: " << 0.0 << endl<< endl;
+                }
+                j = RNGtrueDist.size()-1;
+                printi = 1;
+                cout << "R-near neighbors:" <<endl;
+                if(RNGneighbors.size() > 0){
+                    for(int i=RNGneighbors.size()-1; i>= 0; i--){
+                        if(j>=0) RNGneighbors[i].printNeighbor(printi, RNGtrueDist[j]);
+                        j--;
+                        printi++;
+                    }
+                }     
+            }    
 
             for(int i=0; i<trainSet.getNumberOfPixels(); i++){
                 if(hashFamily[i]!=NULL){

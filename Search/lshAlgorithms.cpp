@@ -30,11 +30,35 @@ int FindW(int samples, Dataset *set){
     return sum/samples;
 }
 
-void  ANNsearch(int L, int k, int indexq, unsigned char *q, Dataset *trainSet, HashTable** hashTables){
+void trueDistance(vector<double>& trueDist, int R, int indexq, unsigned char *q, Dataset *trainSet, HashTable** hashTables){
+    double min, manh=0.0;
+    
+    if(R > 0){
+        for(int i=0; i<trainSet->getNumberOfImages(); i++){
+        manh = manhattan(q, trainSet->imageAt(i),  hashTables[0]->getvectorsDim());
+            if(manh<R) {
+                trueDist.push_back(manh);
+            }
+        }    
+    }else{
+        min = DBL_MAX;
+        for(int i=0; i<trainSet->getNumberOfImages(); i++){
+            manh = manhattan(q, trainSet->imageAt(i),  hashTables[0]->getvectorsDim());
+            if(manh<min) {
+                min = manh;
+                trueDist.push_back(manh);
+            }
+        }
+    }    
+
+    return;
+
+}
+
+void ANNsearch(vector<Neighbor>& neighbors, int L, int k, int indexq, unsigned char *q, Dataset *trainSet, HashTable** hashTables){
     unsigned int g_hash = 0;
     double min, manh=0.0;
-    vector<Neighbor> neighbors;
-    vector<double> trueDist;
+
     for(int i=0; i<L; i++){
         g_hash = hashTables[i]->ghash(q);
         min = DBL_MAX;
@@ -51,41 +75,15 @@ void  ANNsearch(int L, int k, int indexq, unsigned char *q, Dataset *trainSet, H
             }
         }
     }
-    //Calculate true distances
-    min = DBL_MAX;
-    for(int i=0; i<trainSet->getNumberOfImages(); i++){
-        manh = manhattan(q, trainSet->imageAt(i),  hashTables[0]->getvectorsDim());
-        if(manh<min) {
-            min = manh;
-            trueDist.push_back(manh);
-        }
-    }
 
-    int j = trueDist.size()-1;
-    int printi = 1;
-    cout << "Query: " << indexq << endl;
-    if(neighbors.size() > 0){
-        for(int i=neighbors.size()-1; i>neighbors.size()-1-k; i--){
-            if(j>=0) neighbors[i].printNeighbor(printi, trueDist[j]);
-            j--;
-            printi++;
-        }
-        cout << "tLSH: " << 0.0 << endl;
-        cout << "tTrue: " << 0.0 << endl;
-        cout << "R-near neighbors:" <<endl;
-        cout << "???" << endl;
-    }    
     return;
 }
 
-void RNGsearch(int L, int R, int indexq, unsigned char* q, Dataset *trainSet, HashTable** hashTables){
+void RNGsearch(vector<Neighbor>& neighbors, int L, int R, int indexq, unsigned char* q, Dataset *trainSet, HashTable** hashTables){
     unsigned int g_hash = 0;
     double manh=0.0;
-    vector<Neighbor> neighbors;
-    vector<double> trueDist;
     for(int i=0; i<L; i++){
         g_hash = hashTables[i]->ghash(q);
-  
         vector<imageInfo>* images = hashTables[i] ->getBucketArray()[g_hash%(hashTables[i] ->gethashTableSize())] -> getImageList();
         for (vector<imageInfo>::iterator it = images->begin() ; it != images->end(); ++it){
             if((*it).ghash == g_hash){
@@ -97,30 +95,7 @@ void RNGsearch(int L, int R, int indexq, unsigned char* q, Dataset *trainSet, Ha
                 // j++;
             }
         }
-    }
-    //Calculate true distances
-
-    for(int i=0; i<trainSet->getNumberOfImages(); i++){
-        manh = manhattan(q, trainSet->imageAt(i),  hashTables[0]->getvectorsDim());
-        if(manh<R) {
-            trueDist.push_back(manh);
-        }
-    }
-
-    int j = trueDist.size()-1;
-    int printi = 1;
-    cout << "Query: " << indexq << endl;
-    if(neighbors.size() > 0){
-        for(int i=neighbors.size()-1; i>= 0; i--){
-            if(j>=0) neighbors[i].printNeighbor(printi, trueDist[j]);
-            j--;
-            printi++;
-        }
-        cout << "tLSH: " << 0.0 << endl;
-        cout << "tTrue: " << 0.0 << endl;
-        cout << "R-near neighbors:" <<endl;
-        cout << "???" << endl;
-    }    
+    }  
     return;
 }    
 
@@ -131,9 +106,9 @@ Neighbor::Neighbor(int i, double l, unsigned char* img): index(i), lshDist(l){
 };
 
 void Neighbor::printNeighbor(int i, double trueDist){
-    // cout << "Nearest neighbor-" << i << ": " << index << endl;
-    // cout << "distanceLSH: " << lshDist << endl;
-    // cout << "distanceTrue: " << trueDist << endl;
+    cout << "Nearest neighbor-" << i << ": " << index << endl;
+    cout << "distanceLSH: " << lshDist << endl;
+    cout << "distanceTrue: " << trueDist << endl;
 };
 
 Neighbor::~Neighbor(){  };

@@ -29,7 +29,7 @@ int main(int argc, char** argv){
             if (!strcmp("-M", argv[i])) m = (char*)argv[i+1];   /* -M */
             if (!strcmp("-probes", argv[i])) pr = (char*)argv[i+1]; /* -probes */
             if (!strcmp("-o", argv[i])) o = (char*)argv[i+1];   /* -o */
-            if (!strcmp("-N", argv[i])) n = (char*)argv[i+1];  /* -probes */
+            if (!strcmp("-N", argv[i])) n = (char*)argv[i+1];  /* -N */
             if (!strcmp("-R", argv[i])) r = (char*)argv[i+1];   /* -R */
         }
 
@@ -93,7 +93,7 @@ int main(int argc, char** argv){
             queryInput.read((char*)querySet.imageAt(0), (querySet.getNumberOfPixels())*(querySet.getNumberOfImages()));
             queryInput.close();
 
-            int bucketsNumber = pow(2,K);
+            int bucketsNumber = trainSet.getNumberOfImages()/16; //pow(2,K);
 
                 // int W = FindW(img, &trainSet);
                 // cout << "W is " << W << endl;
@@ -108,11 +108,11 @@ int main(int argc, char** argv){
 
             for(int j=0; j<trainSet.getNumberOfImages(); j++){
                 unsigned int g_hash = (unsigned int)(projection->ghash(trainSet.imageAt(j)));
-                projection->getBucketArray()[g_hash]->addImage(j,g_hash,trainSet.imageAt(j));
+                projection->getBucketArray()[g_hash%bucketsNumber]->addImage(j,g_hash,trainSet.imageAt(j));
             }
             cout<<"here"<<endl;
-            for(int i = 0 ;i < 1; i++){
-                hyperCubeSearch(R, probes,i, querySet.imageAt(i), &trainSet, projection);
+            for(int i = 0 ;i < 10; i++){
+                hyperCubeSearch(R,N, probes,i, querySet.imageAt(i), &trainSet, projection);
             }  
 
             for(int i=0; i<trainSet.getNumberOfPixels(); i++){

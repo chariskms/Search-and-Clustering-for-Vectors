@@ -4,6 +4,7 @@
 #include <vector>
 #include "hash.h"
 #include "dataset.hpp"
+#include <fstream>
 
 class Neighbor{
     // int indexq;
@@ -13,7 +14,8 @@ class Neighbor{
 
     public:
         Neighbor(int, double, unsigned char*);
-        void printNeighbor(int, double);
+        void printLshNeighbor(int, double, std::ofstream&);
+        void printCubeNeighbor(int, double, std::ofstream&);
         ~Neighbor();
 };
 

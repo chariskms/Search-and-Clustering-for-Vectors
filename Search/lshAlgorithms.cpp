@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cfloat>
 #include <math.h>
+#include <fstream>
 #include "dataset.hpp"
 #include "metrics.h"
 #include "lshAlgorithms.h"
@@ -32,7 +33,7 @@ int FindW(int samples, Dataset *set){
 
 void trueDistance(vector<double>& trueDist, int R, int indexq, unsigned char *q, Dataset *trainSet, HashTable** hashTables){
     double min, manh=0.0;
-    
+
     if(R > 0){
         for(int i=0; i<trainSet->getNumberOfImages(); i++){
         manh = manhattan(q, trainSet->imageAt(i),  hashTables[0]->getvectorsDim());
@@ -105,10 +106,16 @@ Neighbor::Neighbor(int i, double l, unsigned char* img): index(i), lshDist(l){
     image = img;
 };
 
-void Neighbor::printNeighbor(int i, double trueDist){
-    cout << "Nearest neighbor-" << i << ": " << index << endl;
-    cout << "distanceLSH: " << lshDist << endl;
-    cout << "distanceTrue: " << trueDist << endl;
+void Neighbor::printLshNeighbor(int i, double trueDist, ofstream& outputf){
+    outputf << "Nearest neighbor-" << i << ": " << index << endl;
+    outputf << "distanceLSH: " << lshDist << endl;
+    outputf << "distanceTrue: " << trueDist << endl;
+};
+
+void Neighbor::printCubeNeighbor(int i, double trueDist, ofstream& outputf){
+    outputf << "Nearest neighbor-" << i << ": " << index << endl;
+    outputf << "distanceCube: " << lshDist << endl;
+    outputf << "distanceTrue: " << trueDist << endl;
 };
 
 Neighbor::~Neighbor(){  };

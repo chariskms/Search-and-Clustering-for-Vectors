@@ -110,11 +110,18 @@ int main(int argc, char** argv){
                 unsigned int g_hash = (unsigned int)(projection->ghash(trainSet.imageAt(j)));
                 projection->getBucketArray()[g_hash%bucketsNumber]->addImage(j,g_hash,trainSet.imageAt(j));
             }
+
+            ofstream outputf("out");
+            if (!outputf.is_open()){
+                cerr<<"Failed to open input data."<<endl;
+                return 0;
+            }
+
             cout<<"here"<<endl;
             for(int i = 0 ;i < 10; i++){
-                hyperCubeSearch(R,N, probes,i, querySet.imageAt(i), &trainSet, projection);
+                hyperCubeSearch(outputf, R,N, probes,i, querySet.imageAt(i), &trainSet, projection);
             }  
-
+            outputf.close();
             for(int i=0; i<trainSet.getNumberOfPixels(); i++){
                 if(hashFamily[i]!=NULL){
                     delete hashFamily[i];

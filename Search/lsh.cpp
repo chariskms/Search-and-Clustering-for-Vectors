@@ -109,6 +109,8 @@ int main(int argc, char** argv){
                 }
             }
 
+            fstream outputf("out");
+            outputf.open("out",fstream::out);
 
             for(int index = 0; index < 10;index++){
                 vector<Neighbor> ANNneighbors;
@@ -125,27 +127,28 @@ int main(int argc, char** argv){
 
                 int j = ANNtrueDist.size()-1;
                 int printi = 1;
-                cout << "Query: " << index << endl;
+                outputf << "Query: " << index << endl;
                 if(ANNneighbors.size() > ANNneighbors.size()-1-N){
                     for(int i=ANNneighbors.size()-1; i>ANNneighbors.size()-1-N; i--){
-                        if(j>=0) ANNneighbors[i].printNeighbor(printi, ANNtrueDist[j]);
+                        if(j>=0) ANNneighbors[i].printLshNeighbor(printi, ANNtrueDist[j],outputf);
                         j--;
                         printi++;
                     }
-                    cout << "tLSH: " << 0.0 << endl;
-                    cout << "tTrue: " << 0.0 << endl<< endl;
+                    outputf << "tLSH: " << 0.0 << endl;
+                    outputf << "tTrue: " << 0.0 << endl<< endl;
                 }
                 j = RNGtrueDist.size()-1;
                 printi = 1;
                 cout << "R-near neighbors:" <<endl;
                 if(RNGneighbors.size() > 0){
                     for(int i=RNGneighbors.size()-1; i>= 0; i--){
-                        if(j>=0) RNGneighbors[i].printNeighbor(printi, RNGtrueDist[j]);
+                        if(j>=0) RNGneighbors[i].printLshNeighbor(printi, RNGtrueDist[j],outputf);
                         j--;
                         printi++;
                     }
                 }     
-            }    
+            }  
+            outputf.close();  
 
             for(int i=0; i<trainSet.getNumberOfPixels(); i++){
                 if(hashFamily[i]!=NULL){

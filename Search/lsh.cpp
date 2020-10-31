@@ -109,40 +109,53 @@ int main(int argc, char** argv){
                 }
             }
 
-            fstream outputf("out");
-            outputf.open("out",fstream::out);
-
+            ofstream outputf("out");
+            if (!outputf.is_open()){
+                cerr<<"Failed to open output data."<<endl;
+                return 0;
+            }
+            clock_t lshAnnStart, lshRngStart, AnnTrueStart, RngTrueStart;
+            double lshAnnTime, lshRngTime, trueAnnTime, trueRngTime;
             for(int index = 0; index < 10;index++){
                 vector<Neighbor> ANNneighbors;
                 vector<Neighbor> RNGneighbors;
                 vector<double> ANNtrueDist;
                 vector<double> RNGtrueDist;
 
+                lshAnnStart = clock();
                 ANNsearch(ANNneighbors,L, N, index, querySet.imageAt(index), &trainSet, hashTables);
+                lshAnnTime = (double)(clock() - lshAnnStart)/CLOCKS_PER_SEC;
+
+                AnnTrueStart = clock();
                 trueDistance(ANNtrueDist, 0,index, querySet.imageAt(index), &trainSet,hashTables);
+                trueAnnTime = (double)(clock() - AnnTrueStart)/CLOCKS_PER_SEC;
 
-
+                lshRngStart = clock();
                 RNGsearch(RNGneighbors, L, R, index, querySet.imageAt(index),&trainSet, hashTables);
+                lshRngTime = (double)(clock() - lshRngStart)/CLOCKS_PER_SEC;
+
+                RngTrueStart = clock();
                 trueDistance(RNGtrueDist, R,index, querySet.imageAt(index), &trainSet,hashTables);
+                trueRngTime = (double)(clock() - RngTrueStart)/CLOCKS_PER_SEC;
 
                 int j = ANNtrueDist.size()-1;
                 int printi = 1;
                 outputf << "Query: " << index << endl;
                 if(ANNneighbors.size() > ANNneighbors.size()-1-N){
                     for(int i=ANNneighbors.size()-1; i>ANNneighbors.size()-1-N; i--){
-                        if(j>=0) ANNneighbors[i].printLshNeighbor(printi, ANNtrueDist[j],outputf);
+                        if(j>=0) ANNneighbors[i].printLshNeighbor(printi, ANNtrueDist[j], outputf);
                         j--;
                         printi++;
                     }
-                    outputf << "tLSH: " << 0.0 << endl;
-                    outputf << "tTrue: " << 0.0 << endl<< endl;
+                    outputf << "tLSH: " << lshAnnTime << endl;
+                    outputf << "tTrue: " << trueAnnTime<< endl<< endl;
                 }
                 j = RNGtrueDist.size()-1;
                 printi = 1;
-                cout << "R-near neighbors:" <<endl;
+                outputf << "R-near neighbors:" <<endl;
                 if(RNGneighbors.size() > 0){
                     for(int i=RNGneighbors.size()-1; i>= 0; i--){
-                        if(j>=0) RNGneighbors[i].printLshNeighbor(printi, RNGtrueDist[j],outputf);
+                        if(j>=0) RNGneighbors[i].printLshNeighbor(printi, RNGtrueDist[j], outputf);
                         j--;
                         printi++;
                     }

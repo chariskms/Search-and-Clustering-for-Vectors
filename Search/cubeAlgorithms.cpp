@@ -133,7 +133,7 @@ void output(ofstream& outputf, int indexq, int N, vector<Neighbor>& ANNneighbors
 }
     
 
-void hyperCubeSearch(ofstream& outputf,int R,int N, int probs,int indexq, unsigned char* q, Dataset *trainSet, Projection * projection){
+void hyperCubeSearch(vector<Neighbor>& ANNneighbors,vector<Neighbor>& RNGneighbors,ofstream& outputf,int R,int N, int probs,int indexq, unsigned char* q, Dataset *trainSet, Projection * projection){
     
     unsigned int qhash = projection->ghash(q);
     int qLength = (int)log2(qhash)+1;
@@ -144,8 +144,6 @@ void hyperCubeSearch(ofstream& outputf,int R,int N, int probs,int indexq, unsign
     //cout << "distance num :" << combs.size() << endl;
     bool stop = false;
     int i = 0; ///////distance 
-    vector<Neighbor> ANNneighbors;
-    vector<Neighbor> RNGneighbors;
     vector<double> ANNtrueDist;
     vector<double> RNGtrueDist;
     while(i < probs && !stop){

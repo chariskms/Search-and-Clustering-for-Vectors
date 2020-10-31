@@ -2,4 +2,4 @@
 #include "dataset.hpp"
 #include "projection.hpp"
 
-void hyperCubeSearch(ofstream&, int ,int, int ,int, unsigned char* , Dataset *, Projection *);
+void hyperCubeSearch(std::vector<Neighbor>&, std::vector<Neighbor>&, ofstream&, int ,int, int ,int, unsigned char* , Dataset *, Projection *);

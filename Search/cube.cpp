@@ -8,6 +8,7 @@
 #include "dataset.hpp"
 #include "projection.hpp"
 #include "cubeAlgorithms.h"
+#include "lshAlgorithms.h"
 
 
 // #include "dataset.hpp"
@@ -113,13 +114,17 @@ int main(int argc, char** argv){
 
             ofstream outputf("out");
             if (!outputf.is_open()){
-                cerr<<"Failed to open input data."<<endl;
+                cerr<<"Failed to open output data."<<endl;
                 return 0;
             }
 
             cout<<"here"<<endl;
             for(int i = 0 ;i < 10; i++){
-                hyperCubeSearch(outputf, R,N, probes,i, querySet.imageAt(i), &trainSet, projection);
+                vector<Neighbor> ANNneighbors;
+                vector<Neighbor> RNGneighbors;
+                hyperCubeSearch(ANNneighbors, RNGneighbors, outputf, R,N, probes,i, querySet.imageAt(i), &trainSet, projection);
+
+                
             }  
             outputf.close();
             for(int i=0; i<trainSet.getNumberOfPixels(); i++){

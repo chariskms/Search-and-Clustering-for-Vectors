@@ -102,7 +102,32 @@ void hammingCombinations(int num, vector<unsigned int> & combs){
     return;
 }
 
-
+void output(int indexq, int N, vector<Neighbor>& ANNneighbors, vector<Neighbor>& RNGneighbors, vector<double>& ANNtrueDist, vector<double>& RNGtrueDist){
+    
+    int j = ANNtrueDist.size()-1;
+    int printn = 1;
+    cout << "Query: " << indexq << endl;
+    if(ANNneighbors.size() > ANNneighbors.size()-1-N){
+        for(int n=ANNneighbors.size()-1; n>ANNneighbors.size()-1-N; n--){
+            if(j>=0) ANNneighbors[n].printNeighbor(printn, ANNtrueDist[j]);
+            j--;
+            printn++;
+        }
+        cout << "tHyperCube: " << 0.0 << endl;
+        cout << "tTrue: " << 0.0 << endl<< endl;
+    }
+    j = RNGtrueDist.size()-1;
+    printn = 1;
+    cout << "R-near neighbors:" <<endl;
+    if(RNGneighbors.size() > 0){
+        for(int n=RNGneighbors.size()-1; n>= 0; n--){
+            if(j>=0) RNGneighbors[n].printNeighbor(printn, RNGtrueDist[j]);
+            j--;
+            printn++;
+        }
+    } 
+    return;
+}
     
 
 void hyperCubeSearch(int R,int N, int probs,int indexq, unsigned char* q, Dataset *trainSet, Projection * projection){
@@ -115,78 +140,35 @@ void hyperCubeSearch(int R,int N, int probs,int indexq, unsigned char* q, Datase
     //cout << "distance num :" << combs.size() << endl;
     bool stop = false;
     int i = 0; ///////distance 
-    
+    vector<Neighbor> ANNneighbors;
+    vector<Neighbor> RNGneighbors;
+    vector<double> ANNtrueDist;
+    vector<double> RNGtrueDist;
     while(i < probs && !stop){
         
         if(i == 0){
-            vector<Neighbor> ANNneighbors;
-            vector<Neighbor> RNGneighbors;
-            vector<double> ANNtrueDist;
-            vector<double> RNGtrueDist;
             //cout << "first in my bucket qhash :" << qhash << endl;
             hyperCubeANNsearch(ANNneighbors,qhash, projection -> getnumberOfHashFuncs(), indexq, q, trainSet, projection);
             hyperCubeRNGsearch(RNGneighbors, qhash, R, indexq, q,trainSet,projection);
             hyperTrueDistance(ANNtrueDist,0,indexq, q, trainSet, projection);
             hyperTrueDistance(RNGtrueDist,R,indexq, q, trainSet, projection);
 
-            int j = ANNtrueDist.size()-1;
-            int printn = 1;
-            cout << "Query: " << indexq << endl;
-            if(ANNneighbors.size() > ANNneighbors.size()-1-N){
-                for(int n=ANNneighbors.size()-1; n>ANNneighbors.size()-1-N; n--){
-                    if(j>=0) ANNneighbors[n].printNeighbor(printn, ANNtrueDist[j]);
-                    j--;
-                    printn++;
-                }
-                cout << "tHyperCube: " << 0.0 << endl;
-                cout << "tTrue: " << 0.0 << endl<< endl;
-            }
-            j = RNGtrueDist.size()-1;
-            printn = 1;
-            cout << "R-near neighbors:" <<endl;
-            if(RNGneighbors.size() > 0){
-                for(int n=RNGneighbors.size()-1; n>= 0; n--){
-                    if(j>=0) RNGneighbors[n].printNeighbor(printn, RNGtrueDist[j]);
-                    j--;
-                    printn++;
-                }
-            } 
+            // output(indexq, N, ANNneighbors, RNGneighbors, ANNtrueDist, RNGtrueDist);
 
         }else{
             for (int z = 0; z < combs[i-1].size(); z++){
                 //search
-                vector<Neighbor> ANNneighbors;
-                vector<Neighbor> RNGneighbors;
-                vector<double> ANNtrueDist;
-                vector<double> RNGtrueDist;
+                // vector<Neighbor> ANNneighbors;
+                // vector<Neighbor> RNGneighbors;
+                // vector<double> ANNtrueDist;
+                // vector<double> RNGtrueDist;
 
                 hyperCubeANNsearch(ANNneighbors,combs[i-1][z], projection -> getnumberOfHashFuncs(), indexq, q, trainSet, projection);
                 hyperCubeRNGsearch(RNGneighbors, combs[i-1][z], R, indexq, q,trainSet,projection);
                 hyperTrueDistance(ANNtrueDist,0,indexq, q, trainSet, projection);
                 hyperTrueDistance(RNGtrueDist,R,indexq, q, trainSet, projection);
 
-                int j = ANNtrueDist.size()-1;
-                int printn = 1;
-                cout << "Query: " << indexq << endl;
-                if(ANNneighbors.size() > ANNneighbors.size()-1-N){
-                    for(int n=ANNneighbors.size()-1; n>ANNneighbors.size()-1-N; n--){
-                        if(j>=0) ANNneighbors[n].printNeighbor(printn, ANNtrueDist[j]);
-                        j--;
-                        printn++;
-                    }
-                    cout << "tHyperCube: " << 0.0 << endl;
-                    cout << "tTrue: " << 0.0 << endl<< endl;
-                }
-                j = RNGtrueDist.size()-1;
-                printn = 1;
-                cout << "R-near neighbors:" <<endl;
-                if(RNGneighbors.size() > 0){
-                    for(int n=RNGneighbors.size()-1; n>= 0; n--){
-                        if(j>=0) RNGneighbors[n].printNeighbor(printn, RNGtrueDist[j]);
-                        j--;
-                        printn++;
-                    }
-                } 
+                // output(indexq, N, ANNneighbors, RNGneighbors, ANNtrueDist, RNGtrueDist);
 
             }
         }
@@ -198,11 +180,12 @@ void hyperCubeSearch(int R,int N, int probs,int indexq, unsigned char* q, Datase
                 hammingCombinations(combs[i-1][j], combs[i]);
             }   
         }
-        /////////////////////////////////////////////////////     
-        //cout << "dim" << i << endl;
-        // if(stop){
+
+        // if(ANNneighbors.size() > N){
         //     break;
         // }
+        
         i++; //raise distance
-    }    
+    }   
+    output(indexq, N, ANNneighbors, RNGneighbors, ANNtrueDist, RNGtrueDist); 
 }

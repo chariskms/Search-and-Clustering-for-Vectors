@@ -122,6 +122,8 @@ int main(int argc, char** argv){
             } 
             delete[] hashFamily;
          /* PROGRAM ENDS HERE */
+
+            delete projection;
             exec_time = (double)(clock() - tStart)/CLOCKS_PER_SEC;
             cout << "Execution time is: "<< exec_time << endl;
         }  

@@ -123,19 +123,19 @@ int main(int argc, char** argv){
                 vector<double> RNGtrueDist;
 
                 lshAnnStart = clock();
-                ANNsearch(ANNneighbors,L, N, index, querySet.imageAt(index), &trainSet, hashTables);
+                ANNsearch(ANNneighbors,L, N, querySet.imageAt(index), hashTables);
                 lshAnnTime = (double)(clock() - lshAnnStart)/CLOCKS_PER_SEC;
 
                 AnnTrueStart = clock();
-                trueDistance(ANNtrueDist, 0,index, querySet.imageAt(index), &trainSet,hashTables);
+                trueDistance(ANNtrueDist, 0, querySet.imageAt(index), &trainSet,hashTables);
                 trueAnnTime = (double)(clock() - AnnTrueStart)/CLOCKS_PER_SEC;
 
                 lshRngStart = clock();
-                RNGsearch(RNGneighbors, L, R, index, querySet.imageAt(index),&trainSet, hashTables);
+                RNGsearch(RNGneighbors, L, R, querySet.imageAt(index), hashTables);
                 lshRngTime = (double)(clock() - lshRngStart)/CLOCKS_PER_SEC;
 
                 RngTrueStart = clock();
-                trueDistance(RNGtrueDist, R,index, querySet.imageAt(index), &trainSet,hashTables);
+                trueDistance(RNGtrueDist, R, querySet.imageAt(index), &trainSet,hashTables);
                 trueRngTime = (double)(clock() - RngTrueStart)/CLOCKS_PER_SEC;
 
                 int j = ANNtrueDist.size()-1;

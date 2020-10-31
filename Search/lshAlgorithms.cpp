@@ -31,7 +31,7 @@ int FindW(int samples, Dataset *set){
     return sum/samples;
 }
 
-void trueDistance(vector<double>& trueDist, int R, int indexq, unsigned char *q, Dataset *trainSet, HashTable** hashTables){
+void trueDistance(vector<double>& trueDist, int R, unsigned char *q, Dataset *trainSet, HashTable** hashTables){
     double min, manh=0.0;
 
     if(R > 0){
@@ -56,7 +56,7 @@ void trueDistance(vector<double>& trueDist, int R, int indexq, unsigned char *q,
 
 }
 
-void ANNsearch(vector<Neighbor>& neighbors, int L, int k, int indexq, unsigned char *q, Dataset *trainSet, HashTable** hashTables){
+void ANNsearch(vector<Neighbor>& neighbors, int L, int k, unsigned char *q, HashTable** hashTables){
     unsigned int g_hash = 0;
     double min, manh=0.0;
 
@@ -80,7 +80,7 @@ void ANNsearch(vector<Neighbor>& neighbors, int L, int k, int indexq, unsigned c
     return;
 }
 
-void RNGsearch(vector<Neighbor>& neighbors, int L, int R, int indexq, unsigned char* q, Dataset *trainSet, HashTable** hashTables){
+void RNGsearch(vector<Neighbor>& neighbors, int L, int R, unsigned char* q, HashTable** hashTables){
     unsigned int g_hash = 0;
     double manh=0.0;
     for(int i=0; i<L; i++){

@@ -20,9 +20,9 @@ class Neighbor{
 };
 
 int FindW(int, Dataset*);
-void ANNsearch(std::vector<Neighbor>&,int, int, int, unsigned char*, Dataset*, HashTable**);
-void RNGsearch(std::vector<Neighbor>&,int, int, int, unsigned char*, Dataset*, HashTable**);
-void trueDistance(std::vector<double>&, int, int, unsigned char *, Dataset *, HashTable**);
+void ANNsearch(std::vector<Neighbor>&,int, int, unsigned char*, HashTable**);
+void RNGsearch(std::vector<Neighbor>&,int, int, unsigned char*, HashTable**);
+void trueDistance(std::vector<double>&, int, unsigned char *, Dataset *, HashTable**);
 
 
 

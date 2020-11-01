@@ -1,7 +1,7 @@
 CXX = g++
 all: cluster
 cluster:
-	$(CXX) -o cluster cluster.cpp centroids.cpp ../Search/metrics.cpp ../Search/dataset.cpp
+	$(CXX) -o cluster cluster.cpp centroids.cpp ../Search/metrics.cpp ../Search/dataset.cpp ../Search/hash.cpp ../Search/lshAlgorithms.cpp
 run_cluster:
 	./cluster -i ../train-images.idx3-ubyte -c ../cluster.conf -o fileo -m Classic
 val_cluster:

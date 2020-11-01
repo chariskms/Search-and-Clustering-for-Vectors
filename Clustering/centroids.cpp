@@ -600,7 +600,7 @@ void Clusters::Output(char* method, char *output, bool complete, double tCluster
                 outfile << ", ";
                 for(int j=0; j<images[i].size(); j++){
                     outfile << images[i][j];
-                    if(j==images[i].size()-1) outfile << ", ";
+                    if(j!=images[i].size()-1) outfile << ", ";
                 }
                 outfile << "}\n\n";
             }

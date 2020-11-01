@@ -70,9 +70,6 @@ int main(int argc, char** argv){
             if (pr!=NULL) probes = atoi(pr);
             if (r!=NULL) R = atof(r);
 
-            /* PROGRAM STARTS HERE */
-            clock_t tStart = clock();
-
             int magicNumber = 0,numberOfImages = 0,numberOfRows = 0,numberOfColumns = 0, img=0;
             int numOfpixels;
 
@@ -97,69 +94,96 @@ int main(int argc, char** argv){
             trainInput.close();
 
             img = numberOfImages;
+            string queryfile, outputfile, answer;
+            bool termination = false;
 
-            //Open query file
-            fstream queryInput(q);
-            if(!queryInput.is_open()){
-                cerr<<"Failed to open input data."<<endl;
-                return 0;
-            }
-            queryInput.read((char*)&magicNumber, 4);
-            queryInput.read((char*)&numberOfImages, 4);
-            queryInput.read((char*)&numberOfRows, 4);
-            queryInput.read((char*)&numberOfColumns, 4);
+            while(!termination){
+                /* PROGRAM STARTS HERE */
+                clock_t tStart = clock();
 
-            //Convert intergers from Big Endian to Little Endian
-            magicNumber = SWAP_INT32(magicNumber);
-            numberOfImages = SWAP_INT32(numberOfImages);
-            numberOfRows = SWAP_INT32(numberOfRows);
-            numberOfColumns = SWAP_INT32(numberOfColumns);
-            Dataset querySet(magicNumber, numberOfImages, numberOfColumns, numberOfRows);
-            queryInput.read((char*)querySet.imageAt(0), (querySet.getNumberOfPixels())*(querySet.getNumberOfImages()));
-            queryInput.close();
-
-            int bucketsNumber = trainSet.getNumberOfImages()/16; //pow(2,K);
-
-            // int W = FindW(img, &trainSet);
-            // cout << "W is " << W << endl;
-            int W = 40000;
-            HashFunction** hashFamily = new HashFunction*[trainSet.getNumberOfPixels()];
-            for(int i = 0; i < trainSet.getNumberOfPixels();i++){
-                hashFamily[i] = NULL;
-            }
-            Projection *projection = new Projection(trainSet.getNumberOfPixels(),bucketsNumber, K,W, hashFamily);
-            for(int j=0; j<trainSet.getNumberOfImages(); j++){
-                unsigned int g_hash = (unsigned int)(projection->ghash(trainSet.imageAt(j)));
-                projection->getBucketArray()[g_hash%bucketsNumber]->addImage(j,g_hash,trainSet.imageAt(j));
-            }
-            ofstream outputf(o);
-            if (!(outputf.is_open())){
-                cerr<<"Failed to open output data."<<endl;
-                return 0;
-            }
-            double cubeAnnTime, cubeRngTime, trueAnnTime, trueRngTime;
-            for(int i = 0 ;i < 1000; i++){
-                vector<Neighbor> ANNneighbors;
-                vector<Neighbor> RNGneighbors;
-                vector<double> ANNtrueDist;
-                vector<double> RNGtrueDist;
-                hyperCubeSearch(ANNneighbors, RNGneighbors, ANNtrueDist, RNGtrueDist, cubeAnnTime, cubeRngTime, trueAnnTime, trueRngTime, true, R, N, probes, i, querySet.imageAt(i),&trainSet, projection);
-                cubeOutput(outputf, i,  N, ANNneighbors, RNGneighbors, ANNtrueDist, RNGtrueDist,cubeAnnTime, cubeRngTime, trueAnnTime, trueRngTime);
-            }
-
-
-            outputf.close();
-            for(int i=0; i<trainSet.getNumberOfPixels(); i++){
-                if(hashFamily[i]!=NULL){
-                    delete hashFamily[i];
+                //Open query file
+                fstream queryInput(q);
+                if(!queryInput.is_open()){
+                    cerr<<"Failed to open input data."<<endl;
+                    return 0;
                 }
-            }
-            delete[] hashFamily;
-            delete projection;
+                queryInput.read((char*)&magicNumber, 4);
+                queryInput.read((char*)&numberOfImages, 4);
+                queryInput.read((char*)&numberOfRows, 4);
+                queryInput.read((char*)&numberOfColumns, 4);
 
-            /* PROGRAM ENDS HERE */
-            exec_time = (double)(clock() - tStart)/CLOCKS_PER_SEC;
-            cout << "Execution time is: "<< exec_time << endl;
+                //Convert intergers from Big Endian to Little Endian
+                magicNumber = SWAP_INT32(magicNumber);
+                numberOfImages = SWAP_INT32(numberOfImages);
+                numberOfRows = SWAP_INT32(numberOfRows);
+                numberOfColumns = SWAP_INT32(numberOfColumns);
+                Dataset querySet(magicNumber, numberOfImages, numberOfColumns, numberOfRows);
+                queryInput.read((char*)querySet.imageAt(0), (querySet.getNumberOfPixels())*(querySet.getNumberOfImages()));
+                queryInput.close();
+
+                int bucketsNumber = trainSet.getNumberOfImages()/16; //pow(2,K);
+
+                // int W = FindW(img, &trainSet);
+                // cout << "W is " << W << endl;
+                int W = 40000;
+                HashFunction** hashFamily = new HashFunction*[trainSet.getNumberOfPixels()];
+                for(int i = 0; i < trainSet.getNumberOfPixels();i++){
+                    hashFamily[i] = NULL;
+                }
+                Projection *projection = new Projection(trainSet.getNumberOfPixels(),bucketsNumber, K,W, hashFamily);
+                for(int j=0; j<trainSet.getNumberOfImages(); j++){
+                    unsigned int g_hash = (unsigned int)(projection->ghash(trainSet.imageAt(j)));
+                    projection->getBucketArray()[g_hash%bucketsNumber]->addImage(j,g_hash,trainSet.imageAt(j));
+                }
+
+                ofstream outputf(o);
+                if (!outputf.is_open()){
+                    cerr<<"Failed to open output data."<<endl;
+                    return 0;
+                }
+                double cubeAnnTime, cubeRngTime, trueAnnTime, trueRngTime;
+                for(int i=0; i<10; i++){
+                    vector<Neighbor> ANNneighbors;
+                    vector<Neighbor> RNGneighbors;
+                    vector<double> ANNtrueDist;
+                    vector<double> RNGtrueDist;
+                    hyperCubeSearch(ANNneighbors, RNGneighbors, ANNtrueDist, RNGtrueDist, cubeAnnTime, cubeRngTime, trueAnnTime, trueRngTime, true, R, N, probes, i, querySet.imageAt(i),&trainSet, projection);
+                    cubeOutput(outputf, i,  N, ANNneighbors, RNGneighbors, ANNtrueDist, RNGtrueDist,cubeAnnTime, cubeRngTime, trueAnnTime, trueRngTime);
+                }
+                outputf.close();
+
+                for(int i=0; i<trainSet.getNumberOfPixels(); i++){
+                    if(hashFamily[i]!=NULL){
+                        delete hashFamily[i];
+                    }
+                }
+                delete[] hashFamily;
+                delete projection;
+
+                /* PROGRAM ENDS HERE */
+                exec_time = (double)(clock() - tStart)/CLOCKS_PER_SEC;
+                cout << "\nExecution time is: "<< exec_time << endl;
+
+                cout << "\nYou want to execute the lsh with another queryfile? (Y/N)" << endl;
+                cin >> answer;
+                if(answer.compare("Y")==0 || answer.compare("Yes")==0) {
+                    cout << "Please type the path for queryfile:" << endl;
+                    cin >> queryfile;
+                    q = &queryfile[0];
+                    cout << "Please type the path for outputfile:" << endl;
+                    cin >> outputfile;
+                    o = &outputfile[0];
+                }
+                else if (answer.compare("N")==0 || answer.compare("No")==0){
+                    termination = true;
+                    cout << "The program will terminate." << endl;
+                }
+                else {
+                    cout << "This answer is not recognizable. The program will terminate." << endl;
+                    termination = true;
+                }
+
+            }
         }
 
     }

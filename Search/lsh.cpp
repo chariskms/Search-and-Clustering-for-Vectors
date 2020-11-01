@@ -63,9 +63,6 @@ int main(int argc, char** argv){
             if (n!=NULL) N = atoi(n);
             if (r!=NULL) R = atof(r);
 
-            /* PROGRAM STARTS HERE */
-            clock_t tStart = clock();
-
             int magicNumber = 0,numberOfImages = 0,numberOfRows = 0,numberOfColumns = 0, img=0;
             int numOfpixels;
 
@@ -90,122 +87,146 @@ int main(int argc, char** argv){
             trainInput.close();
 
             img = numberOfImages;
+            string queryfile, outputfile, answer;
+            bool termination = false;
 
-            //Open query file
-            fstream queryInput(q);
-            if(!queryInput.is_open()){
-                cerr<<"Failed to open input data."<<endl;
-                return 0;
-            }
-            queryInput.read((char*)&magicNumber, 4);
-            queryInput.read((char*)&numberOfImages, 4);
-            queryInput.read((char*)&numberOfRows, 4);
-            queryInput.read((char*)&numberOfColumns, 4);
+            while(!termination){
+                /* PROGRAM STARTS HERE */
+                clock_t tStart = clock();
 
-            //Convert intergers from Big Endian to Little Endian
-            magicNumber = SWAP_INT32(magicNumber);
-            numberOfImages = SWAP_INT32(numberOfImages);
-            numberOfRows = SWAP_INT32(numberOfRows);
-            numberOfColumns = SWAP_INT32(numberOfColumns);
-            Dataset querySet(magicNumber, numberOfImages, numberOfColumns, numberOfRows);
-            queryInput.read((char*)querySet.imageAt(0), (querySet.getNumberOfPixels())*(querySet.getNumberOfImages()));
-            queryInput.close();
-
-
-            ///////////////////////////////////////structure test///////////////////////////////////////
-            int bucketsNumber = floor(trainSet.getNumberOfImages()/16);
-
-            // int W = FindW(img, &trainSet);
-            // cout << "W is " << W << endl;
-            int W = 40000;
-            HashFunction** hashFamily = new HashFunction*[trainSet.getNumberOfPixels()];
-            for(int i = 0; i < trainSet.getNumberOfPixels();i++){
-                hashFamily[i] = NULL;
-            }
-
-            HashTable **hashTables = new HashTable*[L];
-            for(int i=0; i<L; i++){
-                hashTables[i] = new HashTable(trainSet.getNumberOfPixels(),bucketsNumber, K,W,hashFamily);
-
-                for(int j=0; j<img; j++){
-                    unsigned int g_hash = (unsigned int)(hashTables[i]->ghash(trainSet.imageAt(j)));
-                    hashTables[i]->getBucketArray()[g_hash%bucketsNumber]->addImage(j,g_hash,trainSet.imageAt(j));
+                //Open query file
+                fstream queryInput(q);
+                if(!queryInput.is_open()){
+                    cerr<<"Failed to open input data."<<endl;
+                    return 0;
                 }
-            }
+                queryInput.read((char*)&magicNumber, 4);
+                queryInput.read((char*)&numberOfImages, 4);
+                queryInput.read((char*)&numberOfRows, 4);
+                queryInput.read((char*)&numberOfColumns, 4);
 
-            ofstream outputf(o);
-            if (!outputf.is_open()){
-                cerr<<"Failed to open output data."<<endl;
-                return 0;
-            }
-            clock_t lshAnnStart, lshRngStart, AnnTrueStart, RngTrueStart;
-            double lshAnnTime, lshRngTime, trueAnnTime, trueRngTime;
-            for(int index = 0; index < 10;index++){
-                vector<Neighbor> ANNneighbors;
-                vector<Neighbor> RNGneighbors;
-                vector<double> ANNtrueDist;
-                vector<double> RNGtrueDist;
-
-                lshAnnStart = clock();
-                ANNsearch(ANNneighbors,L, N, querySet.imageAt(index), hashTables);
-                lshAnnTime = (double)(clock() - lshAnnStart)/CLOCKS_PER_SEC;
-
-                AnnTrueStart = clock();
-                trueDistance(ANNtrueDist, 0, querySet.imageAt(index), &trainSet,hashTables);
-                sort(ANNtrueDist.begin(), ANNtrueDist.end());
-                trueAnnTime = (double)(clock() - AnnTrueStart)/CLOCKS_PER_SEC;
-
-                lshRngStart = clock();
-                RNGsearch(RNGneighbors, L, R, querySet.imageAt(index), hashTables);
-                lshRngTime = (double)(clock() - lshRngStart)/CLOCKS_PER_SEC;
-
-                // RngTrueStart = clock();
-                // trueDistance(RNGtrueDist, R, querySet.imageAt(index), &trainSet,hashTables);
-                // trueRngTime = (double)(clock() - RngTrueStart)/CLOCKS_PER_SEC;
+                //Convert intergers from Big Endian to Little Endian
+                magicNumber = SWAP_INT32(magicNumber);
+                numberOfImages = SWAP_INT32(numberOfImages);
+                numberOfRows = SWAP_INT32(numberOfRows);
+                numberOfColumns = SWAP_INT32(numberOfColumns);
+                Dataset querySet(magicNumber, numberOfImages, numberOfColumns, numberOfRows);
+                queryInput.read((char*)querySet.imageAt(0), (querySet.getNumberOfPixels())*(querySet.getNumberOfImages()));
+                queryInput.close();
 
 
+                ///////////////////////////////////////structure test///////////////////////////////////////
+                int bucketsNumber = floor(trainSet.getNumberOfImages()/16);
 
-                int size = ANNneighbors.size();
-                int j = 0;
-                int printi = 1;
-                outputf << "Query: " << index << endl;
-                if(size > size-1-N){
-                    for(int i=size-1; i>size-1-N; i--){
-                        if(j>=0) ANNneighbors[i].printLshNeighbor(printi, ANNtrueDist[j],false, outputf);
-                        j++;
-                        printi++;
-                    }
-                    outputf << "tLSH: " << lshAnnTime << endl;
-                    outputf << "tTrue: " << trueAnnTime<< endl<< endl;
+                // int W = FindW(img, &trainSet);
+                // cout << "W is " << W << endl;
+                int W = 40000;
+                HashFunction** hashFamily = new HashFunction*[trainSet.getNumberOfPixels()];
+                for(int i = 0; i < trainSet.getNumberOfPixels();i++){
+                    hashFamily[i] = NULL;
                 }
-                size = RNGneighbors.size();
-                j = 0;
-                printi = 1;
-                outputf << "R-near neighbors:" <<endl;
-                if(size > 0){
-                    for(int i=size-1; i>= 0; i--){
-                        if(j>=0) RNGneighbors[i].printLshNeighbor(printi, 0,true, outputf);
-                        j++;
-                        printi++;
+
+                HashTable **hashTables = new HashTable*[L];
+                for(int i=0; i<L; i++){
+                    hashTables[i] = new HashTable(trainSet.getNumberOfPixels(),bucketsNumber, K,W,hashFamily);
+
+                    for(int j=0; j<img; j++){
+                        unsigned int g_hash = (unsigned int)(hashTables[i]->ghash(trainSet.imageAt(j)));
+                        hashTables[i]->getBucketArray()[g_hash%bucketsNumber]->addImage(j,g_hash,trainSet.imageAt(j));
                     }
                 }
-            }
-            outputf.close();
 
-            for(int i=0; i<trainSet.getNumberOfPixels(); i++){
-                if(hashFamily[i]!=NULL){
-                    delete hashFamily[i];
+                ofstream outputf(o);
+                if (!outputf.is_open()){
+                    cerr<<"Failed to open output data."<<endl;
+                    return 0;
                 }
+                clock_t lshAnnStart, lshRngStart, AnnTrueStart, RngTrueStart;
+                double lshAnnTime, lshRngTime, trueAnnTime, trueRngTime;
+                for(int index=0; index<10; index++){
+                    vector<Neighbor> ANNneighbors;
+                    vector<Neighbor> RNGneighbors;
+                    vector<double> ANNtrueDist;
+                    vector<double> RNGtrueDist;
+
+                    lshAnnStart = clock();
+                    ANNsearch(ANNneighbors,L, N, querySet.imageAt(index), hashTables);
+                    lshAnnTime = (double)(clock() - lshAnnStart)/CLOCKS_PER_SEC;
+
+                    AnnTrueStart = clock();
+                    trueDistance(ANNtrueDist, 0, querySet.imageAt(index), &trainSet,hashTables);
+                    sort(ANNtrueDist.begin(), ANNtrueDist.end());
+                    trueAnnTime = (double)(clock() - AnnTrueStart)/CLOCKS_PER_SEC;
+
+                    lshRngStart = clock();
+                    RNGsearch(RNGneighbors, L, R, querySet.imageAt(index), hashTables);
+                    lshRngTime = (double)(clock() - lshRngStart)/CLOCKS_PER_SEC;
+
+                    // RngTrueStart = clock();
+                    // trueDistance(RNGtrueDist, R, querySet.imageAt(index), &trainSet,hashTables);
+                    // trueRngTime = (double)(clock() - RngTrueStart)/CLOCKS_PER_SEC;
+
+                    int size = ANNneighbors.size();
+                    int j = 0;
+                    int printi = 1;
+                    outputf << "Query: " << index << endl;
+                    if(size > size-1-N){
+                        for(int i=size-1; i>size-1-N; i--){
+                            if(j>=0) ANNneighbors[i].printLshNeighbor(printi, ANNtrueDist[j],false, outputf);
+                            j++;
+                            printi++;
+                        }
+                        outputf << "tLSH: " << lshAnnTime << endl;
+                        outputf << "tTrue: " << trueAnnTime<< endl<< endl;
+                    }
+                    size = RNGneighbors.size();
+                    j = 0;
+                    printi = 1;
+                    outputf << "R-near neighbors:" <<endl;
+                    if(size > 0){
+                        for(int i=size-1; i>= 0; i--){
+                            if(j>=0) RNGneighbors[i].printLshNeighbor(printi, 0,true, outputf);
+                            j++;
+                            printi++;
+                        }
+                    }
+                }
+                outputf.close();
+
+                for(int i=0; i<trainSet.getNumberOfPixels(); i++){
+                    if(hashFamily[i]!=NULL){
+                        delete hashFamily[i];
+                    }
+                }
+                delete[] hashFamily;
+                for(int i=0; i<L; i++) delete hashTables[i];
+                delete[] hashTables;
+
+                /* PROGRAM ENDS HERE */
+                exec_time = (double)(clock() - tStart)/CLOCKS_PER_SEC;
+                cout << "\nExecution time is: "<< exec_time << endl;
+
+                cout << "\nYou want to execute the lsh with another queryfile? (Y/N)" << endl;
+                cin >> answer;
+                if(answer.compare("Y")==0 || answer.compare("Yes")==0) {
+                    cout << "Please type the path for queryfile:" << endl;
+                    cin >> queryfile;
+                    q = &queryfile[0];
+                    cout << "Please type the path for outputfile:" << endl;
+                    cin >> outputfile;
+                    o = &outputfile[0];
+                }
+                else if (answer.compare("N")==0 || answer.compare("No")==0){
+                    termination = true;
+                    cout << "The program will terminate." << endl;
+                }
+                else {
+                    cout << "This answer is not recognizable. The program will terminate." << endl;
+                    termination = true;
+                }
+
+
             }
-            delete[] hashFamily;
-            for(int i=0; i<L; i++) delete hashTables[i];
-            delete[] hashTables;
-            ///////////////////////////////////////structure test///////////////////////////////////////
-
-
-            /* PROGRAM ENDS HERE */
-            exec_time = (double)(clock() - tStart)/CLOCKS_PER_SEC;
-            cout << "\nExecution time is: "<< exec_time << endl;
         }
 
     }

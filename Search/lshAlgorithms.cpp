@@ -44,10 +44,7 @@ void trueDistance(vector<double>& trueDist, int R, unsigned char *q, Dataset *tr
         min = DBL_MAX;
         for(int i=0; i<trainSet->getNumberOfImages(); i++){
             manh = manhattan(q, trainSet->imageAt(i),  hashTables[0]->getvectorsDim());
-            if(manh<min) {
-                min = manh;
-                trueDist.push_back(manh);
-            }
+            trueDist.push_back(manh);
         }
     }
 
@@ -104,16 +101,26 @@ Neighbor::Neighbor(int i, double l, unsigned char* img): index(i), lshDist(l){
     image = img;
 };
 
-void Neighbor::printLshNeighbor(int i, double trueDist, ofstream& outputf){
-    outputf << "Nearest neighbor-" << i << ": " << index << endl;
-    outputf << "distanceLSH: " << lshDist << endl;
-    outputf << "distanceTrue: " << trueDist << endl;
+void Neighbor::printLshNeighbor(int i, double trueDist,bool range, ofstream& outputf){
+    if(range){
+        outputf << "neighbor-" << i << ": " << index << endl;
+        outputf << "distanceLSH: " << lshDist << endl;
+    }else{
+        outputf << "Nearest neighbor-" << i << ": " << index << endl;
+        outputf << "distanceLSH: " << lshDist << endl;
+        outputf << "distanceTrue: " << trueDist << endl;
+    }    
 };
 
-void Neighbor::printCubeNeighbor(int i, double trueDist, ofstream& outputf){
-    outputf << "Nearest neighbor-" << i << ": " << index << endl;
-    outputf << "distanceCube: " << lshDist << endl;
-    outputf << "distanceTrue: " << trueDist << endl;
+void Neighbor::printCubeNeighbor(int i, double trueDist,bool range, ofstream& outputf){
+    if(range){
+        outputf << "neighbor-" << i << ": " << index << endl;
+        outputf << "distanceCube: " << lshDist << endl;
+    }else{
+        outputf << "Nearest neighbor-" << i << ": " << index << endl;
+        outputf << "distanceCube: " << lshDist << endl;
+        outputf << "distanceTrue: " << trueDist << endl;
+    }
 };
 
 Neighbor::~Neighbor(){};

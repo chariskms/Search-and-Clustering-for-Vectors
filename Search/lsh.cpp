@@ -5,6 +5,7 @@
 #include <vector>
 #include <fstream>
 #include <cmath>
+#include <algorithm>
 #include "hash.h"
 #include "dataset.hpp"
 #include "lshAlgorithms.h"
@@ -109,7 +110,7 @@ int main(int argc, char** argv){
                 }
             }
 
-            ofstream outputf("out");
+            ofstream outputf(o);
             if (!outputf.is_open()){
                 cerr<<"Failed to open output data."<<endl;
                 return 0;
@@ -128,36 +129,40 @@ int main(int argc, char** argv){
 
                 AnnTrueStart = clock();
                 trueDistance(ANNtrueDist, 0, querySet.imageAt(index), &trainSet,hashTables);
+                sort(ANNtrueDist.begin(), ANNtrueDist.end());
                 trueAnnTime = (double)(clock() - AnnTrueStart)/CLOCKS_PER_SEC;
 
                 lshRngStart = clock();
                 RNGsearch(RNGneighbors, L, R, querySet.imageAt(index), hashTables);
                 lshRngTime = (double)(clock() - lshRngStart)/CLOCKS_PER_SEC;
 
-                RngTrueStart = clock();
-                trueDistance(RNGtrueDist, R, querySet.imageAt(index), &trainSet,hashTables);
-                trueRngTime = (double)(clock() - RngTrueStart)/CLOCKS_PER_SEC;
+                // RngTrueStart = clock();
+                // trueDistance(RNGtrueDist, R, querySet.imageAt(index), &trainSet,hashTables);
+                // trueRngTime = (double)(clock() - RngTrueStart)/CLOCKS_PER_SEC;
+
+                
+
                 int size = ANNneighbors.size();
-                int j = size-1;
+                int j = 0;
                 int printi = 1;
                 outputf << "Query: " << index << endl;
                 if(size > size-1-N){
                     for(int i=size-1; i>size-1-N; i--){
-                        if(j>=0) ANNneighbors[i].printLshNeighbor(printi, ANNtrueDist[j], outputf);
-                        j--;
+                        if(j>=0) ANNneighbors[i].printLshNeighbor(printi, ANNtrueDist[j],false, outputf);
+                        j++;
                         printi++;
                     }
                     outputf << "tLSH: " << lshAnnTime << endl;
                     outputf << "tTrue: " << trueAnnTime<< endl<< endl;
                 }
                 size = RNGneighbors.size();
-                j = size-1;
+                j = 0;
                 printi = 1;
                 outputf << "R-near neighbors:" <<endl;
                 if(size > 0){
                     for(int i=size-1; i>= 0; i--){
-                        if(j>=0) RNGneighbors[i].printLshNeighbor(printi, RNGtrueDist[j], outputf);
-                        j--;
+                        if(j>=0) RNGneighbors[i].printLshNeighbor(printi, 0,true, outputf);
+                        j++;
                         printi++;
                     }
                 }     

@@ -22,7 +22,7 @@ int main(int argc, char** argv){
     if (argc>6 && argc<18){
         char *d=NULL, *q=NULL, *o=NULL, *k=NULL, *m=NULL, *pr=NULL, *n=NULL, *r=NULL;
         double R=1.0, exec_time;
-        int K=3, M=10, probes=2, N=1;
+        int K=3, M=10, probes=2, N=5;
         for (int i = 0; i<argc; i++){
             if (!strcmp("-d", argv[i])) d = (char*)argv[i+1];   /* -inputfile */
             if (!strcmp("-q", argv[i])) q = (char*)argv[i+1];   /* -queryfile */
@@ -112,13 +112,12 @@ int main(int argc, char** argv){
                 projection->getBucketArray()[g_hash%bucketsNumber]->addImage(j,g_hash,trainSet.imageAt(j));
             }
 
-            ofstream outputf("out");
+            ofstream outputf(o);
             if (!outputf.is_open()){
                 cerr<<"Failed to open output data."<<endl;
                 return 0;
             }
             double cubeAnnTime, cubeRngTime, trueAnnTime, trueRngTime;
-            cout<<"here"<<endl;
             for(int i = 0 ;i < 10; i++){
                 vector<Neighbor> ANNneighbors;
                 vector<Neighbor> RNGneighbors;

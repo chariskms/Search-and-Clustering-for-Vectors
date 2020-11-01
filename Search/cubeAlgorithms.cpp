@@ -5,6 +5,7 @@
 #include <math.h>
 #include <fstream>
 #include <time.h>
+#include <algorithm>
 #include "dataset.hpp"
 #include "metrics.h"
 #include "lshAlgorithms.h"
@@ -104,26 +105,28 @@ void hammingCombinations(int num, vector<unsigned int> & combs){
     return;
 }
 
-void output(ofstream& outputf, int indexq, int N, vector<Neighbor>& ANNneighbors, vector<Neighbor>& RNGneighbors, vector<double>& ANNtrueDist, vector<double>& RNGtrueDist,double cubeAnnTime, double cubeRngTime, double trueAnnTime, double trueRngTime){
+void cubeOutput(ofstream& outputf, int indexq, int N, vector<Neighbor>& ANNneighbors, vector<Neighbor>& RNGneighbors, vector<double>& ANNtrueDist, vector<double>& RNGtrueDist,double cubeAnnTime, double cubeRngTime, double trueAnnTime, double trueRngTime){
 
     int j = ANNtrueDist.size()-1;
     int printn = 1;
     outputf << "Query: " << indexq << endl;
-    cout << "Query: " << indexq << endl;
-    if(ANNneighbors.size() > ANNneighbors.size()-1-N){
-        for(int n=ANNneighbors.size()-1; n>ANNneighbors.size()-1-N; n--){
+    int size = ANNneighbors.size();
+    if(size > size-1-N){
+        
+        for(int n=size-1; n>size-1-N; n--){
             if(j>=0) ANNneighbors[n].printCubeNeighbor(printn, ANNtrueDist[j], outputf);
             j--;
             printn++;
         }
-        outputf << "tHyperCube: " << cubeAnnTime << endl;
+        outputf << "tHypercube: " << cubeAnnTime << endl;
         outputf << "tTrue: " << trueAnnTime << endl<< endl;
     }
-    j = RNGtrueDist.size()-1;
+    size = RNGtrueDist.size();
+    j = size-1;
     printn = 1;
     outputf << "R-near neighbors:" <<endl;
-    if(RNGneighbors.size() > 0){
-        for(int n=RNGneighbors.size()-1; n>= 0; n--){
+    if(size > 0){
+        for(int n=size-1; n>= 0; n--){
             if(j>=0) RNGneighbors[n].printCubeNeighbor(printn, RNGtrueDist[j], outputf);
             j--;
             printn++;
@@ -132,39 +135,52 @@ void output(ofstream& outputf, int indexq, int N, vector<Neighbor>& ANNneighbors
     return;
 }
     
+bool compare( Neighbor& a, Neighbor &b)
+{
+    return a.getDist() < b.getDist();
+}
 
-void hyperCubeSearch(vector<Neighbor>& ANNneighbors,vector<Neighbor>& RNGneighbors,ofstream& outputf,int R,int N, int probs,int indexq, unsigned char* q, Dataset *trainSet, Projection * projection){
+void hyperCubeSearch(vector<Neighbor>& ANNneighbors,vector<Neighbor>& RNGneighbors,vector<double>& ANNtrueDist, vector<double>& RNGtrueDist, double& cubeAnnTime, double& cubeRngTime, double& trueAnnTime, double& trueRngTime,bool trueDist,int R,int N, int probs,int indexq, unsigned char* q, Dataset *trainSet, Projection * projection){
     
     unsigned int qhash = projection->ghash(q);
     int qLength = (int)log2(qhash)+1;
-    double cubeAnnTime, cubeRngTime, trueAnnTime, trueRngTime;
+    // double cubeAnnTime, cubeRngTime, trueAnnTime, trueRngTime;
     clock_t cubeAnnStart, cubeRngStart, AnnTrueStart, RngTrueStart;
     vector<vector<unsigned int>> combs(probs); ///////////2d hamming combinatios for every distance
 
     //cout << "distance num :" << combs.size() << endl;
     bool stop = false;
     int i = 0; ///////distance 
-    vector<double> ANNtrueDist;
-    vector<double> RNGtrueDist;
+    trueAnnTime = 0;
+    trueRngTime = 0;
+    cubeAnnTime = 0;
+    cubeRngTime = 0;
+
     while(i < probs && !stop){
         
         if(i == 0){
             //cout << "first in my bucket qhash :" << qhash << endl;
             cubeAnnStart = clock();
-            hyperCubeANNsearch(ANNneighbors,qhash, projection -> getnumberOfHashFuncs(), indexq, q, trainSet, projection);
-            cubeAnnTime = (double)(clock() - cubeAnnStart)/CLOCKS_PER_SEC;
+            if(N != 0){
+                hyperCubeANNsearch(ANNneighbors,qhash, projection -> getnumberOfHashFuncs(), indexq, q, trainSet, projection);
+            }    
+            cubeAnnTime = cubeAnnTime + (double)(clock() - cubeAnnStart)/CLOCKS_PER_SEC;
 
             cubeRngStart = clock();
-            hyperCubeRNGsearch(RNGneighbors, qhash, R, indexq, q,trainSet,projection);
-            cubeRngTime = (double)(clock() - cubeAnnStart)/CLOCKS_PER_SEC;
+            if(R != 0){
+                hyperCubeRNGsearch(RNGneighbors, qhash, R, indexq, q,trainSet,projection);
+            }
+            cubeRngTime = cubeRngTime + (double)(clock() - cubeAnnStart)/CLOCKS_PER_SEC;
 
-            AnnTrueStart = clock();
-            hyperTrueDistance(ANNtrueDist,0,indexq, q, trainSet, projection);
-            trueAnnTime = (double)(clock() - cubeAnnStart)/CLOCKS_PER_SEC;
+            if(trueDist){
+                AnnTrueStart = clock();
+                hyperTrueDistance(ANNtrueDist,0,indexq, q, trainSet, projection);
+                trueAnnTime = trueAnnTime + (double)(clock() - cubeAnnStart)/CLOCKS_PER_SEC;
 
-            RngTrueStart = clock();
-            hyperTrueDistance(RNGtrueDist,R,indexq, q, trainSet, projection);
-            trueRngTime = (double)(clock() - cubeAnnStart)/CLOCKS_PER_SEC;
+                RngTrueStart = clock();
+                hyperTrueDistance(RNGtrueDist,R,indexq, q, trainSet, projection);
+                trueRngTime = trueRngTime + (double)(clock() - cubeAnnStart)/CLOCKS_PER_SEC;
+            }    
 
             // output(indexq, N, ANNneighbors, RNGneighbors, ANNtrueDist, RNGtrueDist);
 
@@ -176,21 +192,26 @@ void hyperCubeSearch(vector<Neighbor>& ANNneighbors,vector<Neighbor>& RNGneighbo
                 // vector<double> ANNtrueDist;
                 // vector<double> RNGtrueDist;
                 cubeAnnStart = clock();
-                hyperCubeANNsearch(ANNneighbors,combs[i-1][z], projection -> getnumberOfHashFuncs(), indexq, q, trainSet, projection);
-                cubeAnnTime = (double)(clock() - cubeAnnStart)/CLOCKS_PER_SEC;
+                if(N != 0){
+                    hyperCubeANNsearch(ANNneighbors,combs[i-1][z], projection -> getnumberOfHashFuncs(), indexq, q, trainSet, projection);
+                }
+                cubeAnnTime = cubeAnnTime + (double)(clock() - cubeAnnStart)/CLOCKS_PER_SEC;
 
                 cubeRngStart = clock();
-                hyperCubeRNGsearch(RNGneighbors, combs[i-1][z], R, indexq, q,trainSet,projection);
-                cubeRngTime = (double)(clock() - cubeAnnStart)/CLOCKS_PER_SEC;
+                if(R != 0){
+                    hyperCubeRNGsearch(RNGneighbors, combs[i-1][z], R, indexq, q,trainSet,projection);
+                }
+                cubeRngTime = cubeRngTime + (double)(clock() - cubeAnnStart)/CLOCKS_PER_SEC;
 
-                AnnTrueStart = clock();
-                hyperTrueDistance(ANNtrueDist,0,indexq, q, trainSet, projection);
-                trueAnnTime = (double)(clock() - cubeAnnStart)/CLOCKS_PER_SEC;
-                
-                RngTrueStart = clock();
-                hyperTrueDistance(RNGtrueDist,R,indexq, q, trainSet, projection);
-                trueRngTime = (double)(clock() - cubeAnnStart)/CLOCKS_PER_SEC;
-
+                if(trueDist){
+                    AnnTrueStart = clock();
+                    hyperTrueDistance(ANNtrueDist,0,indexq, q, trainSet, projection);
+                    trueAnnTime = trueAnnTime + (double)(clock() - cubeAnnStart)/CLOCKS_PER_SEC;
+                    
+                    RngTrueStart = clock();
+                    hyperTrueDistance(RNGtrueDist,R,indexq, q, trainSet, projection);
+                    trueRngTime = trueRngTime + (double)(clock() - cubeAnnStart)/CLOCKS_PER_SEC;
+                }
                 // output(indexq, N, ANNneighbors, RNGneighbors, ANNtrueDist, RNGtrueDist);
 
             }
@@ -203,12 +224,23 @@ void hyperCubeSearch(vector<Neighbor>& ANNneighbors,vector<Neighbor>& RNGneighbo
                 hammingCombinations(combs[i-1][j], combs[i]);
             }   
         }
-
-        if(ANNneighbors.size() > N){
-            break;
-        }
+        // if(ANNneighbors.size() > 20){
+        //     break;
+        // }
         
         i++; //raise distance
-    }   
-    output(outputf, indexq, N, ANNneighbors, RNGneighbors, ANNtrueDist, RNGtrueDist, cubeAnnTime, cubeRngTime, trueAnnTime, trueRngTime); 
+    }
+    if(N != 0){ 
+        sort(ANNneighbors.begin(), ANNneighbors.end(), compare);
+        if(ANNneighbors.size() > N){
+            ANNneighbors.resize(N, Neighbor(0, 0, 0));
+        }    
+    } 
+
+    if(trueDist){ 
+        sort(ANNtrueDist.begin(), ANNtrueDist.end());
+        if(ANNtrueDist.size() > N){
+            ANNtrueDist.resize(N);
+        }    
+    } 
 }

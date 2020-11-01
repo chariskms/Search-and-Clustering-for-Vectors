@@ -7,7 +7,7 @@ cube:
 run_lsh:
 	./lsh -d ../train-images.idx3-ubyte -R 1000 -q ../t10k-images.idx3-ubyte -k 3 -L 1 -o ../../ -N 1
 run_cube:
-	./cube -d ../train-images.idx3-ubyte -q ../t10k-images.idx3-ubyte -k 3 -M 10 -probes 2 -ο output -Ν 1 -R 1.0
+	./cube -d ../train-images.idx3-ubyte -q ../t10k-images.idx3-ubyte -k 3 -M 10 -probes 2 -ο output -Ν 1 -R 1
 val_lsh:
 	valgrind --leak-check=yes --track-origins=yes ./lsh -d ../train-images.idx3-ubyte -R 2.0 -q ../t10k-images.idx3-ubyte -k 3 -L 1 -o ../../ -N 1
 val_cube:

@@ -117,15 +117,18 @@ int main(int argc, char** argv){
                 cerr<<"Failed to open output data."<<endl;
                 return 0;
             }
-
+            double cubeAnnTime, cubeRngTime, trueAnnTime, trueRngTime;
             cout<<"here"<<endl;
-            for(int i = 0 ;i < 10; i++){
+            for(int i = 0 ;i < 100; i++){
                 vector<Neighbor> ANNneighbors;
                 vector<Neighbor> RNGneighbors;
-                hyperCubeSearch(ANNneighbors, RNGneighbors, outputf, R,N, probes,i, querySet.imageAt(i), &trainSet, projection);
-
-                
+                vector<double> ANNtrueDist;
+                vector<double> RNGtrueDist;
+                hyperCubeSearch(ANNneighbors, RNGneighbors, ANNtrueDist, RNGtrueDist, cubeAnnTime, cubeRngTime, trueAnnTime, trueRngTime, true, R, N, probes, i, querySet.imageAt(i),&trainSet, projection);
+                cubeOutput(outputf, i,  N, ANNneighbors, RNGneighbors, ANNtrueDist, RNGtrueDist,cubeAnnTime, cubeRngTime, trueAnnTime, trueRngTime);
             }  
+
+            
             outputf.close();
             for(int i=0; i<trainSet.getNumberOfPixels(); i++){
                 if(hashFamily[i]!=NULL){

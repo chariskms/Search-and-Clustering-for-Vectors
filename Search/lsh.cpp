@@ -137,12 +137,12 @@ int main(int argc, char** argv){
                 RngTrueStart = clock();
                 trueDistance(RNGtrueDist, R, querySet.imageAt(index), &trainSet,hashTables);
                 trueRngTime = (double)(clock() - RngTrueStart)/CLOCKS_PER_SEC;
-
-                int j = ANNtrueDist.size()-1;
+                int size = ANNneighbors.size();
+                int j = size-1;
                 int printi = 1;
                 outputf << "Query: " << index << endl;
-                if(ANNneighbors.size() > ANNneighbors.size()-1-N){
-                    for(int i=ANNneighbors.size()-1; i>ANNneighbors.size()-1-N; i--){
+                if(size > size-1-N){
+                    for(int i=size-1; i>size-1-N; i--){
                         if(j>=0) ANNneighbors[i].printLshNeighbor(printi, ANNtrueDist[j], outputf);
                         j--;
                         printi++;
@@ -150,11 +150,12 @@ int main(int argc, char** argv){
                     outputf << "tLSH: " << lshAnnTime << endl;
                     outputf << "tTrue: " << trueAnnTime<< endl<< endl;
                 }
-                j = RNGtrueDist.size()-1;
+                size = RNGneighbors.size();
+                j = size-1;
                 printi = 1;
                 outputf << "R-near neighbors:" <<endl;
-                if(RNGneighbors.size() > 0){
-                    for(int i=RNGneighbors.size()-1; i>= 0; i--){
+                if(size > 0){
+                    for(int i=size-1; i>= 0; i--){
                         if(j>=0) RNGneighbors[i].printLshNeighbor(printi, RNGtrueDist[j], outputf);
                         j--;
                         printi++;

@@ -11,6 +11,8 @@
 #include <fstream>
 #include "../Search/metrics.h"
 #include "centroids.hpp"
+#include "../Search/projection.hpp"
+#include "../Search/cubeAlgorithms.h"
 #define FLOOR_CHANGED_POINTS 100
 #define MAX_LOOPS 3
 #define RADIUS 12000
@@ -370,30 +372,65 @@ void Clusters::LSHReverseAssignment(int numHashTables, int numHashFunctions, Has
     }
 }
 
-// void Clusters::PROJReverseAssignment(){
-//     int W = 40000;
-//
-//     HashFunction** hashFamily = new HashFunction*[trainSet.getNumberOfPixels()];
-//     for(int i = 0; i < trainSet.getNumberOfPixels();i++){
-//         hashFamily[i] = NULL;
-//     }
-//     Projection *projection = new Projection(trainSet.getNumberOfPixels(),bucketsNumber, K,W, hashFamily);
-//     for(int j=0; j<trainSet.getNumberOfImages(); j++){
-//         unsigned int g_hash = (unsigned int)(projection->ghash(trainSet.imageAt(j)));
-//         projection->getBucketArray()[g_hash%bucketsNumber]->addImage(j,g_hash,trainSet.imageAt(j));
-//     }
-//
-//     hyperCubeSearch(outputf, R, N, probes, i, querySet.imageAt(i), &trainSet, projection);
-//
-//
-//     for(int i=0; i<trainSet.getNumberOfPixels(); i++){
-//         if(hashFamily[i]!=NULL){
-//             delete hashFamily[i];
-//         }
-//     }
-//     delete[] hashFamily;
-//     delete projection;
-// }
+void Clusters::PROJReverseAssignment(int maxMhypercube, int hypercubeDim, int numprobes){
+    int points = Cntrds->getNumPoints();
+    int clusters = Cntrds->getNumClusters();
+    double **DParray = Cntrds->getDParray();
+    Dataset *set = Cntrds->getSet();
+
+    int W = 40000;
+    int bucketsNumber = floor(points/16);
+
+    HashFunction** hashFamily = new HashFunction*[set->getNumberOfPixels()];
+    for(int i = 0; i < set->getNumberOfPixels();i++){
+        hashFamily[i] = NULL;
+    }
+    Projection *projection = new Projection(set->getNumberOfPixels(), bucketsNumber, hypercubeDim,W, hashFamily);
+    for(int j=0; j<set->getNumberOfImages(); j++){
+        unsigned int g_hash = (unsigned int)(projection->ghash(set->imageAt(j)));
+        projection->getBucketArray()[g_hash%bucketsNumber]->addImage(j,g_hash,set->imageAt(j));
+    }
+    ofstream outputf("out");
+    if (!outputf.is_open()){
+        cerr<<"Failed to open output data."<<endl;
+        return;
+    }
+
+    int loops = 0;
+    int tmpPoint = 0;
+    int changedpoints = set->getNumberOfImages();
+    //Checking for no-change
+    while(changedpoints>FLOOR_CHANGED_POINTS && loops<MAX_LOOPS){
+        changedpoints = 0;
+        //Update Centroids from clusters
+        Update();
+
+        double cubeAnnTime, cubeRngTime, trueAnnTime, trueRngTime;
+        // Assignment
+        for(int i=0; i<clusters; i++){
+            vector<Neighbor> ANNneighbors;
+            vector<Neighbor> RNGneighbors;
+            vector<double> ANNtrueDist;
+            vector<double> RNGtrueDist;
+            
+            hyperCubeSearch(ANNneighbors, RNGneighbors, ANNtrueDist, RNGtrueDist, cubeAnnTime, cubeRngTime, trueAnnTime, trueRngTime, false, RADIUS, 0, numprobes, i, &CntrdsVectors[i][0],set, projection);
+        
+        }
+
+
+        cout << "Changed points are: " << changedpoints << " - in loop: " << loops << "\n\n";
+        loops++;
+    }
+    outputf.close();
+
+    for(int i=0; i<set->getNumberOfPixels(); i++){
+        if(hashFamily[i]!=NULL){
+            delete hashFamily[i];
+        }
+    }
+    delete[] hashFamily;
+    delete projection;
+}
 
 void Clusters::Silhouette(){
     int points = Cntrds->getNumPoints();

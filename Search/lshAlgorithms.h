@@ -18,6 +18,7 @@ class Neighbor{
         double getlshDist(){ return lshDist; }
         void printLshNeighbor(int, double, std::ofstream&);
         void printCubeNeighbor(int, double, std::ofstream&);
+        double getDist(){return lshDist;};
         ~Neighbor();
 };
 

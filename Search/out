@@ -1,80 +1,800 @@
 Query: 0
 Nearest neighbor-1: 53843
-distanceLSH: 5244
+distanceCube: 5244
 distanceTrue: 5244
-tLSH: 0.03125
-tTrue: 0.140625
+tHypercube: 0.125
+tTrue: 0.515625
 
 R-near neighbors:
 Query: 1
-Nearest neighbor-1: 31634
-distanceLSH: 12048
+Nearest neighbor-1: 28882
+distanceCube: 10378
 distanceTrue: 10378
-tLSH: 0
-tTrue: 0.140625
+tHypercube: 0.0625
+tTrue: 0.265625
 
 R-near neighbors:
 Query: 2
 Nearest neighbor-1: 58741
-distanceLSH: 1799
+distanceCube: 1799
 distanceTrue: 1799
-tLSH: 0.03125
-tTrue: 0.125
+tHypercube: 0.109375
+tTrue: 0.515625
 
 R-near neighbors:
 Query: 3
 Nearest neighbor-1: 59244
-distanceLSH: 10954
+distanceCube: 10954
 distanceTrue: 10954
-tLSH: 0
-tTrue: 0.140625
+tHypercube: 0.109375
+tTrue: 0.515625
 
 R-near neighbors:
 Query: 4
-Nearest neighbor-1: 40094
-distanceLSH: 9970
+Nearest neighbor-1: 52920
+distanceCube: 9566
 distanceTrue: 9566
-tLSH: 0.03125
-tTrue: 0.125
+tHypercube: 0.140625
+tTrue: 0.53125
 
 R-near neighbors:
 Query: 5
 Nearest neighbor-1: 51900
-distanceLSH: 1670
+distanceCube: 1670
 distanceTrue: 1670
-tLSH: 0.015625
-tTrue: 0.140625
+tHypercube: 0.125
+tTrue: 0.515625
 
 R-near neighbors:
 Query: 6
-Nearest neighbor-1: 19478
-distanceLSH: 13818
+Nearest neighbor-1: 18279
+distanceCube: 11951
 distanceTrue: 11951
-tLSH: 0.03125
-tTrue: 0.125
+tHypercube: 0.125
+tTrue: 0.53125
 
 R-near neighbors:
 Query: 7
-Nearest neighbor-1: 14699
-distanceLSH: 15508
+Nearest neighbor-1: 41982
+distanceCube: 11261
 distanceTrue: 11261
-tLSH: 0
-tTrue: 0.125
+tHypercube: 0.046875
+tTrue: 0.25
 
 R-near neighbors:
 Query: 8
-Nearest neighbor-1: 45011
-distanceLSH: 22024
+Nearest neighbor-1: 52896
+distanceCube: 18348
 distanceTrue: 18244
-tLSH: 0.015625
-tTrue: 0.125
+tHypercube: 0.0625
+tTrue: 0.671875
 
 R-near neighbors:
 Query: 9
 Nearest neighbor-1: 5044
-distanceLSH: 8712
+distanceCube: 8712
 distanceTrue: 8712
-tLSH: 0.015625
-tTrue: 0.140625
+tHypercube: 0.046875
+tTrue: 0.25
+
+R-near neighbors:
+Query: 10
+Nearest neighbor-1: 14092
+distanceCube: 10937
+distanceTrue: 10937
+tHypercube: 0.125
+tTrue: 0.515625
+
+R-near neighbors:
+Query: 11
+Nearest neighbor-1: 36036
+distanceCube: 15986
+distanceTrue: 15875
+tHypercube: 0.046875
+tTrue: 0.53125
+
+R-near neighbors:
+Query: 12
+Nearest neighbor-1: 55441
+distanceCube: 7151
+distanceTrue: 7151
+tHypercube: 0.0625
+tTrue: 0.25
+
+R-near neighbors:
+Query: 13
+Nearest neighbor-1: 24676
+distanceCube: 8155
+distanceTrue: 8155
+tHypercube: 0.140625
+tTrue: 0.515625
+
+R-near neighbors:
+Query: 14
+Nearest neighbor-1: 47502
+distanceCube: 3152
+distanceTrue: 3152
+tHypercube: 0.109375
+tTrue: 0.515625
+
+R-near neighbors:
+Query: 15
+Nearest neighbor-1: 18418
+distanceCube: 13738
+distanceTrue: 13738
+tHypercube: 0.0625
+tTrue: 0.53125
+
+R-near neighbors:
+Query: 16
+Nearest neighbor-1: 25215
+distanceCube: 7101
+distanceTrue: 7101
+tHypercube: 0.125
+tTrue: 0.515625
+
+R-near neighbors:
+Query: 17
+Nearest neighbor-1: 53483
+distanceCube: 6724
+distanceTrue: 6724
+tHypercube: 0.140625
+tTrue: 0.515625
+
+R-near neighbors:
+Query: 18
+Nearest neighbor-1: 29246
+distanceCube: 17803
+distanceTrue: 17803
+tHypercube: 0.109375
+tTrue: 0.515625
+
+R-near neighbors:
+Query: 19
+Nearest neighbor-1: 55328
+distanceCube: 7094
+distanceTrue: 7094
+tHypercube: 0.0625
+tTrue: 0.25
+
+R-near neighbors:
+Query: 20
+Nearest neighbor-1: 22855
+distanceCube: 7561
+distanceTrue: 7561
+tHypercube: 0.109375
+tTrue: 0.515625
+
+R-near neighbors:
+Query: 21
+Nearest neighbor-1: 18430
+distanceCube: 7695
+distanceTrue: 7695
+tHypercube: 0.046875
+tTrue: 0.25
+
+R-near neighbors:
+Query: 22
+Nearest neighbor-1: 11226
+distanceCube: 11432
+distanceTrue: 11432
+tHypercube: 0.140625
+tTrue: 0.546875
+
+R-near neighbors:
+Query: 23
+Nearest neighbor-1: 36015
+distanceCube: 11003
+distanceTrue: 11003
+tHypercube: 0.0625
+tTrue: 0.25
+
+R-near neighbors:
+Query: 24
+Nearest neighbor-1: 31322
+distanceCube: 9718
+distanceTrue: 9718
+tHypercube: 0.125
+tTrue: 0.515625
+
+R-near neighbors:
+Query: 25
+Nearest neighbor-1: 28203
+distanceCube: 12818
+distanceTrue: 12818
+tHypercube: 0.109375
+tTrue: 0.515625
+
+R-near neighbors:
+Query: 26
+Nearest neighbor-1: 21662
+distanceCube: 8050
+distanceTrue: 8050
+tHypercube: 0.140625
+tTrue: 0.53125
+
+R-near neighbors:
+Query: 27
+Nearest neighbor-1: 5046
+distanceCube: 9015
+distanceTrue: 9015
+tHypercube: 0.0625
+tTrue: 0.25
+
+R-near neighbors:
+Query: 28
+Nearest neighbor-1: 56318
+distanceCube: 10194
+distanceTrue: 10194
+tHypercube: 0.125
+tTrue: 0.515625
+
+R-near neighbors:
+Query: 29
+Nearest neighbor-1: 50023
+distanceCube: 2836
+distanceTrue: 2836
+tHypercube: 0.125
+tTrue: 0.53125
+
+R-near neighbors:
+Query: 30
+Nearest neighbor-1: 8230
+distanceCube: 10659
+distanceTrue: 10659
+tHypercube: 0.125
+tTrue: 0.53125
+
+R-near neighbors:
+Query: 31
+Nearest neighbor-1: 26968
+distanceCube: 2395
+distanceTrue: 2395
+tHypercube: 0.125
+tTrue: 0.515625
+
+R-near neighbors:
+Query: 32
+Nearest neighbor-1: 51142
+distanceCube: 6351
+distanceTrue: 6351
+tHypercube: 0.046875
+tTrue: 0.25
+
+R-near neighbors:
+Query: 33
+Nearest neighbor-1: 16572
+distanceCube: 13343
+distanceTrue: 13343
+tHypercube: 0.109375
+tTrue: 0.515625
+
+R-near neighbors:
+Query: 34
+Nearest neighbor-1: 4000
+distanceCube: 6669
+distanceTrue: 6669
+tHypercube: 0.125
+tTrue: 0.515625
+
+R-near neighbors:
+Query: 35
+Nearest neighbor-1: 6605
+distanceCube: 15547
+distanceTrue: 15547
+tHypercube: 0.078125
+tTrue: 0.71875
+
+R-near neighbors:
+Query: 36
+Nearest neighbor-1: 27373
+distanceCube: 10557
+distanceTrue: 10557
+tHypercube: 0.140625
+tTrue: 0.515625
+
+R-near neighbors:
+Query: 37
+Nearest neighbor-1: 25600
+distanceCube: 1883
+distanceTrue: 1883
+tHypercube: 0.125
+tTrue: 0.515625
+
+R-near neighbors:
+Query: 38
+Nearest neighbor-1: 49614
+distanceCube: 11952
+distanceTrue: 11952
+tHypercube: 0.125
+tTrue: 0.53125
+
+R-near neighbors:
+Query: 39
+Nearest neighbor-1: 14169
+distanceCube: 2910
+distanceTrue: 2910
+tHypercube: 0.109375
+tTrue: 0.53125
+
+R-near neighbors:
+Query: 40
+Nearest neighbor-1: 26268
+distanceCube: 2349
+distanceTrue: 2349
+tHypercube: 0.140625
+tTrue: 0.53125
+
+R-near neighbors:
+Query: 41
+Nearest neighbor-1: 31187
+distanceCube: 7781
+distanceTrue: 7781
+tHypercube: 0.125
+tTrue: 0.515625
+
+R-near neighbors:
+Query: 42
+Nearest neighbor-1: 35590
+distanceCube: 8241
+distanceTrue: 8241
+tHypercube: 0.0625
+tTrue: 0.265625
+
+R-near neighbors:
+Query: 43
+Nearest neighbor-1: 30503
+distanceCube: 14064
+distanceTrue: 14014
+tHypercube: 0.0625
+tTrue: 0.265625
+
+R-near neighbors:
+Query: 44
+Nearest neighbor-1: 18325
+distanceCube: 8803
+distanceTrue: 8803
+tHypercube: 0.125
+tTrue: 0.53125
+
+R-near neighbors:
+Query: 45
+Nearest neighbor-1: 50263
+distanceCube: 11602
+distanceTrue: 11602
+tHypercube: 0.0625
+tTrue: 0.265625
+
+R-near neighbors:
+Query: 46
+Nearest neighbor-1: 44418
+distanceCube: 4140
+distanceTrue: 4140
+tHypercube: 0.140625
+tTrue: 0.546875
+
+R-near neighbors:
+Query: 47
+Nearest neighbor-1: 3166
+distanceCube: 11974
+distanceTrue: 11974
+tHypercube: 0.046875
+tTrue: 0.25
+
+R-near neighbors:
+Query: 48
+Nearest neighbor-1: 7526
+distanceCube: 11039
+distanceTrue: 11039
+tHypercube: 0.0625
+tTrue: 0.25
+
+R-near neighbors:
+Query: 49
+Nearest neighbor-1: 5366
+distanceCube: 9033
+distanceTrue: 9033
+tHypercube: 0.0625
+tTrue: 0.265625
+
+R-near neighbors:
+Query: 50
+Nearest neighbor-1: 34535
+distanceCube: 7549
+distanceTrue: 7549
+tHypercube: 0.046875
+tTrue: 0.25
+
+R-near neighbors:
+Query: 51
+Nearest neighbor-1: 15090
+distanceCube: 12313
+distanceTrue: 12313
+tHypercube: 0.078125
+tTrue: 0.546875
+
+R-near neighbors:
+Query: 52
+Nearest neighbor-1: 27593
+distanceCube: 11078
+distanceTrue: 11078
+tHypercube: 0.0625
+tTrue: 0.265625
+
+R-near neighbors:
+Query: 53
+Nearest neighbor-1: 21016
+distanceCube: 10911
+distanceTrue: 10911
+tHypercube: 0.125
+tTrue: 0.515625
+
+R-near neighbors:
+Query: 54
+Nearest neighbor-1: 49838
+distanceCube: 12429
+distanceTrue: 12429
+tHypercube: 0.125
+tTrue: 0.53125
+
+R-near neighbors:
+Query: 55
+Nearest neighbor-1: 45589
+distanceCube: 5843
+distanceTrue: 5843
+tHypercube: 0.0625
+tTrue: 0.265625
+
+R-near neighbors:
+Query: 56
+Nearest neighbor-1: 33952
+distanceCube: 10793
+distanceTrue: 10793
+tHypercube: 0.0625
+tTrue: 0.265625
+
+R-near neighbors:
+Query: 57
+Nearest neighbor-1: 19510
+distanceCube: 2282
+distanceTrue: 2282
+tHypercube: 0.109375
+tTrue: 0.53125
+
+R-near neighbors:
+Query: 58
+Nearest neighbor-1: 11527
+distanceCube: 7761
+distanceTrue: 7761
+tHypercube: 0.046875
+tTrue: 0.265625
+
+R-near neighbors:
+Query: 59
+Nearest neighbor-1: 6026
+distanceCube: 7867
+distanceTrue: 7867
+tHypercube: 0.140625
+tTrue: 0.546875
+
+R-near neighbors:
+Query: 60
+Nearest neighbor-1: 27054
+distanceCube: 10077
+distanceTrue: 10077
+tHypercube: 0.125
+tTrue: 0.53125
+
+R-near neighbors:
+Query: 61
+Nearest neighbor-1: 8067
+distanceCube: 17426
+distanceTrue: 17426
+tHypercube: 0.046875
+tTrue: 0.25
+
+R-near neighbors:
+Query: 62
+Nearest neighbor-1: 42668
+distanceCube: 8226
+distanceTrue: 8226
+tHypercube: 0.0625
+tTrue: 0.265625
+
+R-near neighbors:
+Query: 63
+Nearest neighbor-1: 5396
+distanceCube: 11860
+distanceTrue: 11860
+tHypercube: 0.0625
+tTrue: 0.265625
+
+R-near neighbors:
+Query: 64
+Nearest neighbor-1: 51558
+distanceCube: 16473
+distanceTrue: 13643
+tHypercube: 0.0625
+tTrue: 0.265625
+
+R-near neighbors:
+Query: 65
+Nearest neighbor-1: 2050
+distanceCube: 7727
+distanceTrue: 7727
+tHypercube: 0.046875
+tTrue: 0.25
+
+R-near neighbors:
+Query: 66
+Nearest neighbor-1: 11386
+distanceCube: 12586
+distanceTrue: 12586
+tHypercube: 0.140625
+tTrue: 0.515625
+
+R-near neighbors:
+Query: 67
+Nearest neighbor-1: 44528
+distanceCube: 11130
+distanceTrue: 11130
+tHypercube: 0.125
+tTrue: 0.53125
+
+R-near neighbors:
+Query: 68
+Nearest neighbor-1: 57680
+distanceCube: 7395
+distanceTrue: 7395
+tHypercube: 0.0625
+tTrue: 0.25
+
+R-near neighbors:
+Query: 69
+Nearest neighbor-1: 15492
+distanceCube: 7650
+distanceTrue: 7650
+tHypercube: 0.09375
+tTrue: 0.578125
+
+R-near neighbors:
+Query: 70
+Nearest neighbor-1: 36003
+distanceCube: 7765
+distanceTrue: 7765
+tHypercube: 0.140625
+tTrue: 0.53125
+
+R-near neighbors:
+Query: 71
+Nearest neighbor-1: 45544
+distanceCube: 9719
+distanceTrue: 9719
+tHypercube: 0.125
+tTrue: 0.53125
+
+R-near neighbors:
+Query: 72
+Nearest neighbor-1: 54052
+distanceCube: 15621
+distanceTrue: 15621
+tHypercube: 0.125
+tTrue: 0.53125
+
+R-near neighbors:
+Query: 73
+Nearest neighbor-1: 51145
+distanceCube: 9134
+distanceTrue: 9134
+tHypercube: 0.125
+tTrue: 0.53125
+
+R-near neighbors:
+Query: 74
+Nearest neighbor-1: 34261
+distanceCube: 2545
+distanceTrue: 2545
+tHypercube: 0.140625
+tTrue: 0.515625
+
+R-near neighbors:
+Query: 75
+Nearest neighbor-1: 56932
+distanceCube: 8339
+distanceTrue: 8339
+tHypercube: 0.0625
+tTrue: 0.265625
+
+R-near neighbors:
+Query: 76
+Nearest neighbor-1: 21018
+distanceCube: 7843
+distanceTrue: 7843
+tHypercube: 0.125
+tTrue: 0.515625
+
+R-near neighbors:
+Query: 77
+Nearest neighbor-1: 30690
+distanceCube: 12714
+distanceTrue: 12714
+tHypercube: 0.0625
+tTrue: 0.546875
+
+R-near neighbors:
+Query: 78
+Nearest neighbor-1: 42696
+distanceCube: 7545
+distanceTrue: 7545
+tHypercube: 0.0625
+tTrue: 0.25
+
+R-near neighbors:
+Query: 79
+Nearest neighbor-1: 56167
+distanceCube: 7903
+distanceTrue: 7903
+tHypercube: 0.125
+tTrue: 0.53125
+
+R-near neighbors:
+Query: 80
+Nearest neighbor-1: 45594
+distanceCube: 7754
+distanceTrue: 7754
+tHypercube: 0.140625
+tTrue: 0.546875
+
+R-near neighbors:
+Query: 81
+Nearest neighbor-1: 1830
+distanceCube: 9342
+distanceTrue: 9342
+tHypercube: 0.109375
+tTrue: 0.515625
+
+R-near neighbors:
+Query: 82
+Nearest neighbor-1: 31493
+distanceCube: 11660
+distanceTrue: 11094
+tHypercube: 0.0625
+tTrue: 0.53125
+
+R-near neighbors:
+Query: 83
+Nearest neighbor-1: 26091
+distanceCube: 6350
+distanceTrue: 6350
+tHypercube: 0.125
+tTrue: 0.546875
+
+R-near neighbors:
+Query: 84
+Nearest neighbor-1: 34376
+distanceCube: 14820
+distanceTrue: 14820
+tHypercube: 0.0625
+tTrue: 0.265625
+
+R-near neighbors:
+Query: 85
+Nearest neighbor-1: 2256
+distanceCube: 11885
+distanceTrue: 11885
+tHypercube: 0.0625
+tTrue: 0.265625
+
+R-near neighbors:
+Query: 86
+Nearest neighbor-1: 43645
+distanceCube: 5684
+distanceTrue: 5684
+tHypercube: 0.125
+tTrue: 0.53125
+
+R-near neighbors:
+Query: 87
+Nearest neighbor-1: 23517
+distanceCube: 13961
+distanceTrue: 13961
+tHypercube: 0.109375
+tTrue: 0.515625
+
+R-near neighbors:
+Query: 88
+Nearest neighbor-1: 4430
+distanceCube: 9581
+distanceTrue: 9581
+tHypercube: 0.0625
+tTrue: 0.25
+
+R-near neighbors:
+Query: 89
+Nearest neighbor-1: 29451
+distanceCube: 3664
+distanceTrue: 3664
+tHypercube: 0.125
+tTrue: 0.53125
+
+R-near neighbors:
+Query: 90
+Nearest neighbor-1: 59119
+distanceCube: 9436
+distanceTrue: 9436
+tHypercube: 0.125
+tTrue: 0.546875
+
+R-near neighbors:
+Query: 91
+Nearest neighbor-1: 56568
+distanceCube: 7534
+distanceTrue: 7534
+tHypercube: 0.0625
+tTrue: 0.265625
+
+R-near neighbors:
+Query: 92
+Nearest neighbor-1: 3503
+distanceCube: 8761
+distanceTrue: 8761
+tHypercube: 0.0625
+tTrue: 0.265625
+
+R-near neighbors:
+Query: 93
+Nearest neighbor-1: 37163
+distanceCube: 10136
+distanceTrue: 10136
+tHypercube: 0.125
+tTrue: 0.515625
+
+R-near neighbors:
+Query: 94
+Nearest neighbor-1: 59364
+distanceCube: 4204
+distanceTrue: 4204
+tHypercube: 0.109375
+tTrue: 0.53125
+
+R-near neighbors:
+Query: 95
+Nearest neighbor-1: 2069
+distanceCube: 16441
+distanceTrue: 16441
+tHypercube: 0.0625
+tTrue: 0.25
+
+R-near neighbors:
+Query: 96
+Nearest neighbor-1: 40352
+distanceCube: 4371
+distanceTrue: 4371
+tHypercube: 0.125
+tTrue: 0.53125
+
+R-near neighbors:
+Query: 97
+Nearest neighbor-1: 50992
+distanceCube: 11323
+distanceTrue: 11323
+tHypercube: 0.0625
+tTrue: 0.265625
+
+R-near neighbors:
+Query: 98
+Nearest neighbor-1: 52504
+distanceCube: 9788
+distanceTrue: 9788
+tHypercube: 0.125
+tTrue: 0.546875
+
+R-near neighbors:
+Query: 99
+Nearest neighbor-1: 23447
+distanceCube: 7738
+distanceTrue: 7738
+tHypercube: 0.0625
+tTrue: 0.265625
 
 R-near neighbors:

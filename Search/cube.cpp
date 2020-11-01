@@ -132,14 +132,13 @@ int main(int argc, char** argv){
                 unsigned int g_hash = (unsigned int)(projection->ghash(trainSet.imageAt(j)));
                 projection->getBucketArray()[g_hash%bucketsNumber]->addImage(j,g_hash,trainSet.imageAt(j));
             }
-
             ofstream outputf(o);
-            if (!outputf.is_open()){
+            if (!(outputf.is_open())){
                 cerr<<"Failed to open output data."<<endl;
                 return 0;
             }
             double cubeAnnTime, cubeRngTime, trueAnnTime, trueRngTime;
-            for(int i = 0 ;i < 10; i++){
+            for(int i = 0 ;i < 1000; i++){
                 vector<Neighbor> ANNneighbors;
                 vector<Neighbor> RNGneighbors;
                 vector<double> ANNtrueDist;

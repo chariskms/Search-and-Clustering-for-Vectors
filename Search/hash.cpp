@@ -5,7 +5,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <random>
-#include "hash.h"
+#include "hash.hpp"
 
 using namespace std;
 
@@ -42,9 +42,9 @@ int HashFunction::hash(unsigned char* x){
         }
         else h+=a;
     }
-    
+
     return h%M;
-    
+
 }
 
 // class Bucket
@@ -72,7 +72,7 @@ HashTable::HashTable(int v, int hT, int K, int W, HashFunction** hashFamily): ve
 
     hashFunctions = new HashFunction*[this->numberOfHashFuncs];
     int rand = 0;
-    
+
     uniform_int_distribution<int> distribution3(0,v-1);
     for(int i=0; i<this->numberOfHashFuncs; i++){
         //Choose randomly the ith hash function
@@ -86,7 +86,7 @@ HashTable::HashTable(int v, int hT, int K, int W, HashFunction** hashFamily): ve
     bucketArray = new Bucket*[hashTableSize];
     for(int i=0; i<this->hashTableSize; i++){
         bucketArray[i] = new Bucket(i);
-        
+
     }
 
 }

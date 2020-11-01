@@ -4,14 +4,11 @@
 #include <time.h>
 #include <vector>
 #include <fstream>
-#include <math.h>    
+#include <math.h>
 #include "dataset.hpp"
 #include "projection.hpp"
-#include "cubeAlgorithms.h"
-#include "lshAlgorithms.h"
-
-
-// #include "dataset.hpp"
+#include "cubeAlgorithms.hpp"
+#include "lshAlgorithms.hpp"
 #define IMAGESIZE 800
 #define SWAP_INT32(x) (((x) >> 24) | (((x) & 0x00FF0000) >> 8) | (((x) & 0x0000FF00) << 8) | ((x) << 24))
 // ./cube -d train-images.idx3-ubyte -q fileq -k 3 -M 10 -probes 2 -ο output -Ν 1 -R 1.0
@@ -24,15 +21,41 @@ int main(int argc, char** argv){
         double R=1.0, exec_time;
         int K=3, probes=2, N=5;
         int Max=10;
-        for (int i = 0; i<argc; i++){
-            if (!strcmp("-d", argv[i])) d = (char*)argv[i+1];   /* -inputfile */
-            if (!strcmp("-q", argv[i])) q = (char*)argv[i+1];   /* -queryfile */
-            if (!strcmp("-k", argv[i])) k = (char*)argv[i+1];   /* -k */
-            if (!strcmp("-M", argv[i])) m = (char*)argv[i+1];   /* -M */
-            if (!strcmp("-probes", argv[i])) pr = (char*)argv[i+1]; /* -probes */
-            if (!strcmp("-o", argv[i])) o = (char*)argv[i+1];   /* -o */
-            if (!strcmp("-N", argv[i])) n = (char*)argv[i+1];  /* -N */
-            if (!strcmp("-R", argv[i])) r = (char*)argv[i+1];   /* -R */
+        bool vars[8] = { 0 };
+        for (int i=0; i<8; i++) vars[i] = true;
+        for (int i=0; i<argc; i++){
+            if (!strcmp("-d", argv[i]) && vars[0]) {
+                d = (char*)argv[i+1];   /* -inputfile */
+                vars[0] = false;
+            }
+            if (!strcmp("-q", argv[i]) && vars[1]) {
+                q = (char*)argv[i+1];   /* -queryfile */
+                vars[1] = false;
+            }
+            if (!strcmp("-k", argv[i]) && vars[2]) {
+                k = (char*)argv[i+1];   /* -k */
+                vars[2] = false;
+            }
+            if (!strcmp("-M", argv[i]) && vars[3]) {
+                m = (char*)argv[i+1];   /* -M */
+                vars[3] = false;
+            }
+            if (!strcmp("-probes", argv[i]) && vars[4]) {
+                pr = (char*)argv[i+1]; /* -probes */
+                vars[4] = false;
+            }
+            if (!strcmp("-o", argv[i]) && vars[5]) {
+                o = (char*)argv[i+1];   /* -o */
+                vars[5] = false;
+            }
+            if (!strcmp("-N", argv[i]) && vars[6]) {
+                n = (char*)argv[i+1];  /* -N */
+                vars[6] = false;
+            }
+            if (!strcmp("-R", argv[i]) && vars[7]) {
+                r = (char*)argv[i+1];   /* -R */
+                vars[7] = false;
+            }
         }
 
         if(d==NULL || q==NULL){
@@ -97,17 +120,14 @@ int main(int argc, char** argv){
 
             int bucketsNumber = trainSet.getNumberOfImages()/16; //pow(2,K);
 
-                // int W = FindW(img, &trainSet);
-                // cout << "W is " << W << endl;
+            // int W = FindW(img, &trainSet);
+            // cout << "W is " << W << endl;
             int W = 40000;
-
             HashFunction** hashFamily = new HashFunction*[trainSet.getNumberOfPixels()];
             for(int i = 0; i < trainSet.getNumberOfPixels();i++){
                 hashFamily[i] = NULL;
             }
-
             Projection *projection = new Projection(trainSet.getNumberOfPixels(),bucketsNumber, K,W, hashFamily);
-
             for(int j=0; j<trainSet.getNumberOfImages(); j++){
                 unsigned int g_hash = (unsigned int)(projection->ghash(trainSet.imageAt(j)));
                 projection->getBucketArray()[g_hash%bucketsNumber]->addImage(j,g_hash,trainSet.imageAt(j));
@@ -126,22 +146,22 @@ int main(int argc, char** argv){
                 vector<double> RNGtrueDist;
                 hyperCubeSearch(ANNneighbors, RNGneighbors, ANNtrueDist, RNGtrueDist, cubeAnnTime, cubeRngTime, trueAnnTime, trueRngTime, true, R, N, probes, i, querySet.imageAt(i),&trainSet, projection);
                 cubeOutput(outputf, i,  N, ANNneighbors, RNGneighbors, ANNtrueDist, RNGtrueDist,cubeAnnTime, cubeRngTime, trueAnnTime, trueRngTime);
-            }  
+            }
 
-            
+
             outputf.close();
             for(int i=0; i<trainSet.getNumberOfPixels(); i++){
                 if(hashFamily[i]!=NULL){
                     delete hashFamily[i];
-                }    
-            } 
+                }
+            }
             delete[] hashFamily;
-         /* PROGRAM ENDS HERE */
-
             delete projection;
+
+            /* PROGRAM ENDS HERE */
             exec_time = (double)(clock() - tStart)/CLOCKS_PER_SEC;
             cout << "Execution time is: "<< exec_time << endl;
-        }  
+        }
 
     }
     else {

@@ -2,7 +2,7 @@
 #define ALGO
 
 #include <vector>
-#include "hash.h"
+#include "hash.hpp"
 #include "dataset.hpp"
 #include <fstream>
 

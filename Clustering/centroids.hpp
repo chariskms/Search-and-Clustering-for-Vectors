@@ -1,7 +1,7 @@
 #include "../Search/dataset.hpp"
-#include "../Search/lshAlgorithms.h"
+#include "../Search/lshAlgorithms.hpp"
 #include "../Search/projection.hpp"
-#include "../Search/hash.h"
+#include "../Search/hash.hpp"
 
 class Centroids{
     double **DParray;

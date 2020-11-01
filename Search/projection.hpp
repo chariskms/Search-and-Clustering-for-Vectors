@@ -2,7 +2,7 @@
 #define PROJ
 
 #include <map>
-#include "hash.h"
+#include "hash.hpp"
 using namespace std;
 
 //class HashTable;
@@ -16,7 +16,7 @@ class Projection : public HashTable {
         Projection(int, int, int, int, HashFunction**);
         ~Projection();
         unsigned int ghash(unsigned char*);
-    
+
 };
 
 #endif

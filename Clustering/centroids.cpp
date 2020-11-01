@@ -9,12 +9,12 @@
 #include <algorithm>
 #include <vector>
 #include <fstream>
-#include "../Search/metrics.h"
+#include "../Search/metrics.hpp"
 #include "centroids.hpp"
-#include "../Search/cubeAlgorithms.h"
-#define FLOOR_CHANGED_POINTS 100
-#define MAX_LOOPS 3
-#define RADIUS 12000
+#include "../Search/cubeAlgorithms.hpp"
+#define PERCENT_CHANGED_POINTS 99
+#define MAX_LOOPS 12
+#define RADIUS 8000
 #define W 40000
 
 using namespace std;
@@ -128,7 +128,7 @@ Clusters::Clusters(Centroids* argCntrds) : Cntrds(argCntrds){}
 
 void Clusters::Clustering(char* method, char* output, bool complete, int numHashTables, int numHashFunctions, int maxMhypercube, int hypercubeDim, int numprobes){
     clock_t tStart, tClustering, tSilhouette;
-    cout << "Begin clustering with " << method << " method" << endl;
+    cout << "Begin clustering with " << method << " method for: "  << Cntrds->getNumPoints() << " points." << endl;
     if(strcmp(method, "CLASSIC")==0 || strcmp(method, "classic")==0 || strcmp(method, "Classic")==0){
         tStart = clock();
         Lloyds();
@@ -205,7 +205,7 @@ void Clusters::Clustering(char* method, char* output, bool complete, int numHash
     tStart = clock();
     Silhouette();
     tSilhouette = (double)(clock() - tStart)/CLOCKS_PER_SEC;
-    // Output(method, output, complete, tClustering, tSilhouette);
+    Output(method, output, complete, tClustering, tSilhouette);
 }
 
 //Update
@@ -264,9 +264,12 @@ void Clusters::Lloyds(){
     int loops = 0;
     int tmpPoint = 0;
     int changedpoints = set->getNumberOfImages();
+    int floor_changed_points = points - (points*PERCENT_CHANGED_POINTS/100);
+    cout << "Clustering until: changed_points<=" << floor_changed_points << " OR Max_loops=" << MAX_LOOPS << endl;
+
     //Checking for no-change
-    while(changedpoints>FLOOR_CHANGED_POINTS && loops<MAX_LOOPS){
-        cout << "IN FOR: " << loops << endl;
+    while(changedpoints>floor_changed_points && loops<MAX_LOOPS){
+        cout << "IN LOOP: " << loops+1 << "/" << MAX_LOOPS << endl;
         changedpoints = 0;
         //Update Centroids from clusters
         Update();
@@ -358,7 +361,6 @@ void Clusters::AssignReverse(vector<vector<Neighbor>> Neighbors, bool initialize
                 else CentroidVector = &CntrdsVectors[i][0];
                 double manh = manhattan(set->imageAt(index), CentroidVector, set->dimension());
                 if(manh<DParray[0][index]){
-                    cout << "Change " << manh << "<" << DParray[0][index] << " ~~ " << DParray[2][index] << " -> " << i << endl;
                     DParray[0][index] = manh;
                     DParray[2][index] = i;
                 }
@@ -382,7 +384,6 @@ void Clusters::AssignReverse(vector<vector<Neighbor>> Neighbors, bool initialize
                 }
             }
         }
-        // cout << i << ") " << DParray[0][i] << " " << DParray[2][i] << endl;
     }
 }
 
@@ -411,10 +412,12 @@ void Clusters::LSHReverseAssignment(int numHashTables, int numHashFunctions, Has
     int loops = 0;
     int tmpPoint = 0;
     int changedpoints = set->getNumberOfImages();
+    int floor_changed_points = points - (points*PERCENT_CHANGED_POINTS/100);
+    cout << "Clustering until: changed_points<=" << floor_changed_points << " OR Max_loops=" << MAX_LOOPS << endl;
 
     //Checking for no-change
-    while(changedpoints>FLOOR_CHANGED_POINTS && loops<MAX_LOOPS){
-        cout << "IN FOR: " << loops << endl;
+    while(changedpoints>floor_changed_points && loops<MAX_LOOPS){
+        cout << "IN LOOP: " << loops+1 << "/" << MAX_LOOPS << endl;
         changedpoints = 0;
         //Clear neighbors
         for(int i=0; i<RNGneighbors.size(); i++) RNGneighbors[i].clear();
@@ -473,10 +476,12 @@ void Clusters::PROJReverseAssignment(int maxMhypercube, int numprobes, Projectio
     int loops = 0;
     int tmpPoint = 0;
     int changedpoints = set->getNumberOfImages();
+    int floor_changed_points = points - (points*PERCENT_CHANGED_POINTS/100);
+    cout << "Clustering until: changed_points<=" << floor_changed_points << " OR Max_loops=" << MAX_LOOPS << endl;
 
     //Checking for no-change
-    while(changedpoints>FLOOR_CHANGED_POINTS && loops<MAX_LOOPS){
-        cout << "IN FOR: " << loops << endl;
+    while(changedpoints>floor_changed_points && loops<MAX_LOOPS){
+        cout << "IN LOOP: " << loops+1 << "/" << MAX_LOOPS << endl;
         changedpoints = 0;
         //Clear neighbors
         for(int i=0; i<RNGneighbors.size(); i++) RNGneighbors[i].clear();
@@ -519,6 +524,7 @@ void Clusters::Silhouette(){
     int index2 = 0;
     double manh = 0, sum_a = 0, sum_b = 0, totalsum = 0, clusterssum = 0, max = 0, result = 0;
 
+    cout << "\nBegin silhouette with for: "  << points << " points." << endl;
     for(int i=0; i<images.size(); i++){
         cout << "CLUSTER " << i << "/" << images.size() << endl;
         clusterssum = 0;
@@ -566,8 +572,8 @@ void Clusters::Output(char* method, char *output, bool complete, double tCluster
     ofstream outfile((char*)output);
     if (outfile.is_open()){
         outfile << "Algorithm: "<< method << "\n";
-        outfile << "Time Clustering: "<< (double)tClustering << "\n";
-        outfile << "Time Silhouette: "<< (double)tSilhouette << "\n";
+        outfile << "Time Clustering: "<< (double)tClustering << " sec" << "\n";
+        outfile << "Time Silhouette: "<< (double)tSilhouette << " sec"<< "\n";
         for(int i=0; i<CntrdsVectors.size(); i++){
             outfile << "CLUSTER-" << i+1 << " {size: " << images[i].size() << ", centroid: ";
             for(int j=0; j<CntrdsVectors[i].size(); j++){
@@ -583,7 +589,7 @@ void Clusters::Output(char* method, char *output, bool complete, double tCluster
             }
             else outfile << "stotal = " << snumbers[i];
         }
-        outfile << "}\n\n";
+        outfile << "\n\n";
 
         if(complete){
             for(int i=0; i<CntrdsVectors.size(); i++){
@@ -594,9 +600,9 @@ void Clusters::Output(char* method, char *output, bool complete, double tCluster
                 outfile << ", ";
                 for(int j=0; j<images[i].size(); j++){
                     outfile << images[i][j];
-                    if(j-1<images[i].size()) outfile << ", ";
+                    if(j==images[i].size()-1) outfile << ", ";
                 }
-                outfile << "}\n";
+                outfile << "}\n\n";
             }
         }
 

@@ -6,9 +6,9 @@
 #include <fstream>
 #include <cmath>
 #include <algorithm>
-#include "hash.h"
+#include "hash.hpp"
 #include "dataset.hpp"
-#include "lshAlgorithms.h"
+#include "lshAlgorithms.hpp"
 #define SWAP_INT32(x) (((x) >> 24) | (((x) & 0x00FF0000) >> 8) | (((x) & 0x0000FF00) << 8) | ((x) << 24))
 // ./lsh -d train-images.idx3-ubyte -R 1.0 -q fileq -k 4 -L 5 -o fileo -N 1
 
@@ -19,14 +19,37 @@ int main(int argc, char** argv){
         char *d=NULL, *q=NULL, *o=NULL, *k=NULL, *l=NULL, *n=NULL, *r=NULL;
         double R=1.0, exec_time;
         int K=4, L=5, N=1;
+        bool vars[7] = { 0 };
+        for (int i=0; i<7; i++) vars[i] = true;
         for (int i = 0; i<argc; i++){
-            if (!strcmp("-d", argv[i])) d = (char*)argv[i+1];   /* -inputfile */
-            if (!strcmp("-q", argv[i])) q = (char*)argv[i+1];   /* -queryfile */
-            if (!strcmp("-k", argv[i])) k = (char*)argv[i+1];   /* -k */
-            if (!strcmp("-L", argv[i])) l = (char*)argv[i+1];   /* -L */
-            if (!strcmp("-o", argv[i])) o = (char*)argv[i+1];   /* -o */
-            if (!strcmp("-N", argv[i])) n = (char*)argv[i+1];   /* -N */
-            if (!strcmp("-R", argv[i])) r = (char*)argv[i+1];   /* -R */
+            if (!strcmp("-d", argv[i]) && vars[0]) {
+                d = (char*)argv[i+1];   /* -inputfile */
+                vars[0] = false;
+            }
+            if (!strcmp("-q", argv[i]) && vars[1]) {
+                q = (char*)argv[i+1];   /* -queryfile */
+                vars[1] = false;
+            }
+            if (!strcmp("-k", argv[i]) && vars[2]) {
+                k = (char*)argv[i+1];   /* -k */
+                vars[2] = false;
+            }
+            if (!strcmp("-L", argv[i]) && vars[3]) {
+                l = (char*)argv[i+1];   /* -L */
+                vars[3] = false;
+            }
+            if (!strcmp("-o", argv[i]) && vars[4]) {
+                o = (char*)argv[i+1];   /* -o */
+                vars[4] = false;
+            }
+            if (!strcmp("-N", argv[i]) && vars[5]) {
+                n = (char*)argv[i+1];   /* -N */
+                vars[5] = false;
+            }
+            if (!strcmp("-R", argv[i]) && vars[6]) {
+                r = (char*)argv[i+1];   /* -R */
+                vars[6] = false;
+            }
         }
 
         if(d==NULL || q==NULL || o==NULL){
@@ -140,7 +163,7 @@ int main(int argc, char** argv){
                 // trueDistance(RNGtrueDist, R, querySet.imageAt(index), &trainSet,hashTables);
                 // trueRngTime = (double)(clock() - RngTrueStart)/CLOCKS_PER_SEC;
 
-                
+
 
                 int size = ANNneighbors.size();
                 int j = 0;
@@ -165,15 +188,15 @@ int main(int argc, char** argv){
                         j++;
                         printi++;
                     }
-                }     
-            }  
-            outputf.close();  
+                }
+            }
+            outputf.close();
 
             for(int i=0; i<trainSet.getNumberOfPixels(); i++){
                 if(hashFamily[i]!=NULL){
                     delete hashFamily[i];
-                }    
-            } 
+                }
+            }
             delete[] hashFamily;
             for(int i=0; i<L; i++) delete hashTables[i];
             delete[] hashTables;

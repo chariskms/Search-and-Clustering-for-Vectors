@@ -5,9 +5,9 @@
 #include <math.h>
 #include <fstream>
 #include "dataset.hpp"
-#include "metrics.h"
-#include "lshAlgorithms.h"
-#include "hash.h"
+#include "metrics.hpp"
+#include "lshAlgorithms.hpp"
+#include "hash.hpp"
 
 using namespace std;
 
@@ -109,7 +109,7 @@ void Neighbor::printLshNeighbor(int i, double trueDist,bool range, ofstream& out
         outputf << "Nearest neighbor-" << i << ": " << index << endl;
         outputf << "distanceLSH: " << lshDist << endl;
         outputf << "distanceTrue: " << trueDist << endl;
-    }    
+    }
 };
 
 void Neighbor::printCubeNeighbor(int i, double trueDist,bool range, ofstream& outputf){

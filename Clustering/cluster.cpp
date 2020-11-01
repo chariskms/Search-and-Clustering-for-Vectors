@@ -8,9 +8,9 @@
 #include <sstream>
 #include <cmath>
 #include "centroids.hpp"
-#include "../Search/hash.h"
+#include "../Search/hash.hpp"
 #include "../Search/dataset.hpp"
-#include "../Search/lshalgorithms.h"
+#include "../Search/lshalgorithms.hpp"
 
 #define SWAP_INT32(x) (((x) >> 24) | (((x) & 0x00FF0000) >> 8) | (((x) & 0x0000FF00) << 8) | ((x) << 24))
 // ./cluster -i ../train-images.idx3-ubyte -c ../cluster.conf -o fileo -complete 4 -m LSH
@@ -24,12 +24,29 @@ int main(int argc, char** argv){
         double R=1.0, exec_time;
         int K=-1, L=3, kLSH=14, M=10, kHYP=3, probes=2;
         bool complete = false;
+        bool vars[5] = { 0 };
+        for (int i=0; i<5; i++) vars[i] = true;
         for (int i=0; i<argc; i++){
-            if (!strcmp("-i", argv[i])) I = (char*)argv[i+1];   /* -input file */
-            if (!strcmp("-c", argv[i])) c = (char*)argv[i+1];   /* -configuration file */
-            if (!strcmp("-o", argv[i])) o = (char*)argv[i+1];   /* -output file */
-            if (!strcmp("-complete", argv[i])) complete = true;   /* -optional */
-            if (!strcmp("-m", argv[i])) m = (char*)argv[i+1];   /* method: Classic or LSH or Hypercube */
+            if (!strcmp("-i", argv[i]) && vars[0]) {
+                I = (char*)argv[i+1];   /* -input file */
+                vars[0] = false;
+            }
+            if (!strcmp("-c", argv[i]) && vars[1]) {
+                c = (char*)argv[i+1];   /* -configuration file */
+                vars[1] = false;
+            }
+            if (!strcmp("-o", argv[i]) && vars[2]) {
+                o = (char*)argv[i+1];   /* -output file */
+                vars[2] = false;
+            }
+            if (!strcmp("-complete", argv[i]) && vars[3]) {
+                complete = true;   /* -optional */
+                vars[3] = false;
+            }
+            if (!strcmp("-m", argv[i]) && vars[4]) {
+                m = (char*)argv[i+1];   /* method: Classic or LSH or Hypercube */
+                vars[4] = false;
+            }
         }
 
         if(I==NULL || c==NULL || o==NULL){
@@ -56,6 +73,7 @@ int main(int argc, char** argv){
             trainInput.read((char*)&numberOfColumns, 4);
 
             //Convert intergers from Big Endian to Little Endian
+
             magicNumber = SWAP_INT32(magicNumber);
             numberOfImages = SWAP_INT32(numberOfImages);
             numberOfRows = SWAP_INT32(numberOfRows);

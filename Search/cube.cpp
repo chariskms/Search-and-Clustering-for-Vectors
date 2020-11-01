@@ -22,7 +22,8 @@ int main(int argc, char** argv){
     if (argc>6 && argc<18){
         char *d=NULL, *q=NULL, *o=NULL, *k=NULL, *m=NULL, *pr=NULL, *n=NULL, *r=NULL;
         double R=1.0, exec_time;
-        int K=3, M=10, probes=2, N=5;
+        int K=3, probes=2, N=5;
+        int Max=10;
         for (int i = 0; i<argc; i++){
             if (!strcmp("-d", argv[i])) d = (char*)argv[i+1];   /* -inputfile */
             if (!strcmp("-q", argv[i])) q = (char*)argv[i+1];   /* -queryfile */
@@ -41,7 +42,7 @@ int main(int argc, char** argv){
         }
         else{
             if (k!=NULL) K = atoi(k);
-            if (m!=NULL) M = atoi(m);
+            if (m!=NULL) Max = atoi(m);
             if (n!=NULL) N = atoi(n);
             if (pr!=NULL) probes = atoi(pr);
             if (r!=NULL) R = atof(r);

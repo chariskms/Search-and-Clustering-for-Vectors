@@ -38,7 +38,7 @@ void hyperCubeRNGsearch(vector<Neighbor>& neighbors, int bucket, double R, int i
     unsigned int g_hash = 0;
     double manh=0.0;
     g_hash = bucket; /////////////can with loop////
-
+    int j = 0;
     vector<imageInfo>* images = projection ->getBucketArray()[g_hash%(projection ->gethashTableSize())] -> getImageList();
     for (vector<imageInfo>::iterator it = images->begin() ; it != images->end(); ++it){
 
@@ -47,7 +47,7 @@ void hyperCubeRNGsearch(vector<Neighbor>& neighbors, int bucket, double R, int i
             if(manh < R){
                 neighbors.push_back(Neighbor((*it).index, manh, (*it).image));
             }
-            // if(j>15*L) break;
+            // if(j>M) return;
             // j++;
         }
     }
@@ -58,7 +58,7 @@ void hyperCubeANNsearch(vector<Neighbor>& neighbors, int bucket, int k, int inde
     unsigned int g_hash = 0;
     double min, manh=0.0;
 
-    
+    int j = 0;
     g_hash = bucket; /////////////can with loop////
     min = DBL_MAX;
     vector<imageInfo>* images = projection ->getBucketArray()[g_hash%(projection ->gethashTableSize())] -> getImageList();
@@ -70,7 +70,7 @@ void hyperCubeANNsearch(vector<Neighbor>& neighbors, int bucket, int k, int inde
                 min = manh;
                 neighbors.push_back(Neighbor((*it).index, min, (*it).image));
             }
-            // if(j>15*L) break;
+            // if(j>M) return;
             // j++;
         }
     }

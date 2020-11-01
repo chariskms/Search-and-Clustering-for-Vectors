@@ -14,6 +14,8 @@ class Neighbor{
 
     public:
         Neighbor(int, double, unsigned char*);
+        int getIndex(){ return index; }
+        double getlshDist(){ return lshDist; }
         void printLshNeighbor(int, double, std::ofstream&);
         void printCubeNeighbor(int, double, std::ofstream&);
         ~Neighbor();

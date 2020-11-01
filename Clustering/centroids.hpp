@@ -1,4 +1,6 @@
 #include "../Search/dataset.hpp"
+#include "../Search/lshAlgorithms.h"
+#include "../Search/hash.h"
 
 class Centroids{
     double **DParray;
@@ -28,7 +30,8 @@ class Clusters{
     public:
         Clusters(Centroids*);
         void Clustering(char*, char*, bool, int, int, int, int, int);
-        void LSHReverseAssignment(int, int);
+        void AssignReverse(std::vector<std::vector<Neighbor>>, bool);
+        void LSHReverseAssignment(int, int, HashTable**);
         void PROJReverseAssignment(int, int, int);
         void Update();
         void Lloyds();

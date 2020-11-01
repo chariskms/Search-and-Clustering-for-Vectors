@@ -10,8 +10,6 @@
 #include <vector>
 #include <fstream>
 #include "../Search/metrics.h"
-#include "../Search/hash.h"
-#include "../Search/lshAlgorithms.h"
 #include "centroids.hpp"
 #define FLOOR_CHANGED_POINTS 100
 #define MAX_LOOPS 1
@@ -91,6 +89,7 @@ void Centroids::Initialize(){
 
     //Choose randomly first centroid
     centroids[0] = distribution(generator);
+    cout << "Initialize Centroids with k-Means++ with indexes: " << endl;
     cout << "c0: " << centroids[0] << endl;
     for(int i=1; i<numclusters; i++){
         int sum = 0.0;
@@ -131,7 +130,35 @@ void Clusters::Clustering(char* method, char* output, bool complete, int numHash
         Lloyds();
     }
     else if(strcmp(method, "LSH")==0 || strcmp(method, "lsh")==0 || strcmp(method, "Lsh")==0){
-        LSHReverseAssignment(numHashTables, numHashFunctions);
+        //Initialize hashtables & hashfunctions
+        cout << "Initialize HashTables and HashFunctions..." << endl;
+        int points = Cntrds->getNumPoints();
+        int clusters = Cntrds->getNumClusters();
+        Dataset *set = Cntrds->getSet();
+        int W = 40000;
+        int bucketsNumber = floor(points/16);
+        HashFunction **hashFamily = new HashFunction*[set->getNumberOfPixels()];
+        for(int i=0; i<set->getNumberOfPixels(); i++){
+            hashFamily[i] = NULL;
+        }
+        HashTable **hashTables = new HashTable*[numHashTables];
+        for(int i=0; i<numHashTables; i++){
+            hashTables[i] = new HashTable(set->getNumberOfPixels(),bucketsNumber,numHashFunctions,W,hashFamily);
+            for(int j=0; j<points; j++){
+                unsigned int g_hash = (unsigned int)(hashTables[i]->ghash(set->imageAt(j)));
+                hashTables[i]->getBucketArray()[g_hash%bucketsNumber]->addImage(j,g_hash,set->imageAt(j));
+            }
+        }
+        LSHReverseAssignment(numHashTables, numHashFunctions, hashTables);
+        for(int i=0; i<set->getNumberOfPixels(); i++){
+            if(hashFamily[i]!=NULL){
+                delete hashFamily[i];
+            }
+        }
+        delete[] hashFamily;
+        for(int i=0; i<numHashTables; i++) delete hashTables[i];
+        delete[] hashTables;
+
     }
     else if(strcmp(method, "HYPERCUBE")==0 || strcmp(method, "hypercube")==0 || strcmp(method, "Hypercube")==0){
         cout << "Begin clustering with Hypercube method" << endl;
@@ -141,8 +168,9 @@ void Clusters::Clustering(char* method, char* output, bool complete, int numHash
         cout << "Wrong method. The available methods are: Classic, LSH, Hypercube." << endl;
         return;
     }
-    Silhouette();
-    Output(method, output, complete);
+
+    // Silhouette();
+    // Output(method, output, complete);
 }
 
 //Update
@@ -197,9 +225,6 @@ void Clusters::Lloyds(){
     for(int i=0; i<points; i++)
         images[DParray[2][i]].push_back(i); //Push image to the centroid with min dist DParray[2][i]
 
-    // cout << "before " << endl;
-    // for(int i=0; i<points; i++) cout << i << ") Clusters are: " << DParray[2][i] << " with dist: " << DParray[0][i] << endl;
-
     // index = image[from_cluster][what_image]
     int loops = 0;
     int tmpPoint = 0;
@@ -229,62 +254,105 @@ void Clusters::Lloyds(){
         cout << "Changed points are: " << changedpoints << " - in loop: " << loops << "\n\n";
         loops++;
     }
-
-    // cout << "after " << endl;
-    // for(int i=0; i<points; i++) cout << i << ") Clusters are: " << DParray[2][i] << " with dist: " << DParray[0][i] << endl;
-
 }
 
-void Clusters::LSHReverseAssignment(int numHashTables, int numHashFunctions){
+void Clusters::AssignReverse(vector<vector<Neighbor>> Neighbors, bool initialize){
     int points = Cntrds->getNumPoints();
     int clusters = Cntrds->getNumClusters();
+    int *centroids = Cntrds->getCentroids();
     double **DParray = Cntrds->getDParray();
     Dataset *set = Cntrds->getSet();
 
-    int W = 40000;
-    int bucketsNumber = floor(points/16);
-    HashFunction **hashFamily = new HashFunction*[set->getNumberOfPixels()];
-    for(int i=0; i<set->getNumberOfPixels(); i++){
-        hashFamily[i] = NULL;
-    }
-    HashTable **hashTables = new HashTable*[numHashTables];
-    for(int i=0; i<numHashTables; i++){
-        hashTables[i] = new HashTable(set->getNumberOfPixels(),bucketsNumber,numHashFunctions,W,hashFamily);
-        for(int j=0; j<points; j++){
-            unsigned int g_hash = (unsigned int)(hashTables[i]->ghash(set->imageAt(j)));
-            hashTables[i]->getBucketArray()[g_hash%bucketsNumber]->addImage(j,g_hash,set->imageAt(j));
+    if(initialize){
+        for(int i=0; i<clusters; i++){
+            CntrdsVectors.push_back(std::vector<unsigned char>());
+            CntrdsVectors[i].push_back(*set->imageAt(centroids[i]));
         }
     }
 
-    vector<Neighbor> RNGneighbors;
-    // index = image[from_cluster][what_image]
+    //Unassign all points
+    for(int i=0; i<points; i++) DParray[0][i] = -1;
+    for(int i=0; i<Neighbors.size(); i++){
+        for(int j=0; j<Neighbors[i].size(); j++){
+            int index = Neighbors[i][j].getIndex();
+            //Check if point is unassigned or it has been already assigned
+            if(DParray[0][index]<0){
+                DParray[0][index] = Neighbors[i][j].getlshDist();
+                DParray[2][index] = i;
+            }
+            else{
+                //If is already assigned then find the nearest Centroid
+                double manh = manhattan(set->imageAt(index),  &CntrdsVectors[i][0], set->dimension());
+                if(manh<DParray[0][index]){
+                    cout << "Change " << manh << "<" << DParray[0][index] << " -> " << DParray[2][index] << "-" << i << endl;
+
+                }
+            }
+
+        }
+    }
+    double min = 0, manh = 0;
+    //For unassigned points
+    for(int i=0; i<points; i++){
+        if(DParray[0][i]<0){
+            min = DBL_MAX;
+            for(int j=0; j<clusters; j++){
+                manh = manhattan(set->imageAt(i), &CntrdsVectors[j][0], set->dimension());
+                if(manh<min){
+                    DParray[0][i] = manh;
+                    DParray[2][i] = j;
+                    min = manh;
+                }
+            }
+        }
+        // cout << i << ") " << DParray[0][i] << " " << DParray[2][i] << endl;
+    }
+}
+
+void Clusters::LSHReverseAssignment(int numHashTables, int numHashFunctions, HashTable **hashTables){
+    int points = Cntrds->getNumPoints();
+    int clusters = Cntrds->getNumClusters();
+    int *centroids = Cntrds->getCentroids();
+    double **DParray = Cntrds->getDParray();
+    Dataset *set = Cntrds->getSet();
+
+    //Initialize images from centroids
+    vector<vector<Neighbor>> RNGneighbors;
+    for(int i=0; i<clusters; i++){
+        RNGneighbors.push_back(std::vector<Neighbor>());
+        RNGsearch(RNGneighbors[i], numHashTables, RADIUS, set->imageAt(centroids[i]), hashTables);
+    }
+    AssignReverse(RNGneighbors, true);
+    //Initialize clusters from DParray structure
+    int *tmp = Cntrds->getCentroids();
+    for(int i=0; i<clusters; i++)
+        images.push_back(std::vector<int>());
+    for(int i=0; i<points; i++)
+        images[DParray[2][i]].push_back(i); //Push image to the centroid with min dist DParray[2][i]
+
     int loops = 0;
     int tmpPoint = 0;
     int changedpoints = set->getNumberOfImages();
+
     //Checking for no-change
-    while(changedpoints>FLOOR_CHANGED_POINTS && loops<MAX_LOOPS){
-        changedpoints = 0;
-        //Update Centroids from clusters
-        Update();
+    // while(changedpoints>FLOOR_CHANGED_POINTS && loops<MAX_LOOPS){
+    //     changedpoints = 0;
+    //     //Update Centroids from clusters
+    //     Update();
 
         // Assignment
-        for(int i=0; i<clusters; i++){
-            RNGsearch(RNGneighbors, numHashTables, RADIUS, &CntrdsVectors[i][0], hashTables);
-        }
+        // for(int i=0; i<clusters; i++){
+        //     RNGsearch(RNGneighbors, numHashTables, RADIUS, &CntrdsVectors[i][0], hashTables);
+        //     // for(int j=0; j<RNGneighbors.size(); j++){
+        //     //     cout << "Here " << RNGneighbors[j].getIndex() << endl;
+        //     //
+        //     // }
+        // }
 
-
-        cout << "Changed points are: " << changedpoints << " - in loop: " << loops << "\n\n";
-        loops++;
-    }
-
-    for(int i=0; i<set->getNumberOfPixels(); i++){
-        if(hashFamily[i]!=NULL){
-            delete hashFamily[i];
-        }
-    }
-    delete[] hashFamily;
-    for(int i=0; i<numHashTables; i++) delete hashTables[i];
-    delete[] hashTables;
+    //
+    //     cout << "Changed points are: " << changedpoints << " - in loop: " << loops << "\n\n";
+    //     loops++;
+    // }
 }
 
 // void Clusters::PROJReverseAssignment(){
@@ -376,7 +444,11 @@ void Clusters::Output(char* method, char *output, bool complete){
             }
             outfile << "}\n\n";
         }
+
+
         //Silhouette here
+
+
         if(complete){
             for(int i=0; i<CntrdsVectors.size(); i++){
                 outfile << "CLUSTER-" << i+1 << " { ";
@@ -391,7 +463,6 @@ void Clusters::Output(char* method, char *output, bool complete){
                 outfile << "}\n";
             }
         }
-
 
         outfile.close();
     }

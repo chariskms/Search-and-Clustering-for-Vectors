@@ -10,6 +10,8 @@
 #include <vector>
 #include <fstream>
 #include "../Search/metrics.h"
+#include "../Search/hash.h"
+#include "../Search/lshAlgorithms.h"
 #include "centroids.hpp"
 #define FLOOR_CHANGED_POINTS 100
 #define MAX_LOOPS 1
@@ -129,7 +131,7 @@ void Clusters::Clustering(char* method, char* output, bool complete, int numHash
         Lloyds();
     }
     else if(strcmp(method, "LSH")==0 || strcmp(method, "lsh")==0 || strcmp(method, "Lsh")==0){
-        // LSHReverseAssignment(int numHashTables, int numHashFunctions);
+        LSHReverseAssignment(numHashTables, numHashFunctions);
     }
     else if(strcmp(method, "HYPERCUBE")==0 || strcmp(method, "hypercube")==0 || strcmp(method, "Hypercube")==0){
         cout << "Begin clustering with Hypercube method" << endl;
@@ -248,7 +250,7 @@ void Clusters::LSHReverseAssignment(int numHashTables, int numHashFunctions){
     HashTable **hashTables = new HashTable*[numHashTables];
     for(int i=0; i<numHashTables; i++){
         hashTables[i] = new HashTable(set->getNumberOfPixels(),bucketsNumber,numHashFunctions,W,hashFamily);
-        for(int j=0; j<img; j++){
+        for(int j=0; j<points; j++){
             unsigned int g_hash = (unsigned int)(hashTables[i]->ghash(set->imageAt(j)));
             hashTables[i]->getBucketArray()[g_hash%bucketsNumber]->addImage(j,g_hash,set->imageAt(j));
         }

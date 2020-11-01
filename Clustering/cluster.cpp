@@ -103,7 +103,7 @@ int main(int argc, char** argv){
             Centroids centroids(K, numberOfImages, &trainSet);
             centroids.Initialize();
             Clusters clusters(&centroids);
-            clusters.Clustering(m, o, complete);
+            clusters.Clustering(m, o, complete, L, kLSH, M, kHYP, probes);
 
             /* PROGRAM ENDS HERE */
             exec_time = (double)(clock() - tStart)/CLOCKS_PER_SEC;

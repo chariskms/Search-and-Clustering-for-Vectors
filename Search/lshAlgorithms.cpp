@@ -7,7 +7,6 @@
 #include "dataset.hpp"
 #include "metrics.h"
 #include "lshAlgorithms.h"
-
 #include "hash.h"
 
 using namespace std;
@@ -33,15 +32,15 @@ int FindW(int samples, Dataset *set){
 
 void trueDistance(vector<double>& trueDist, int R, unsigned char *q, Dataset *trainSet, HashTable** hashTables){
     double min, manh=0.0;
-
-    if(R > 0){
+    if(R>0){
         for(int i=0; i<trainSet->getNumberOfImages(); i++){
         manh = manhattan(q, trainSet->imageAt(i),  hashTables[0]->getvectorsDim());
             if(manh<R) {
                 trueDist.push_back(manh);
             }
-        }    
-    }else{
+        }
+    }
+    else{
         min = DBL_MAX;
         for(int i=0; i<trainSet->getNumberOfImages(); i++){
             manh = manhattan(q, trainSet->imageAt(i),  hashTables[0]->getvectorsDim());
@@ -50,7 +49,7 @@ void trueDistance(vector<double>& trueDist, int R, unsigned char *q, Dataset *tr
                 trueDist.push_back(manh);
             }
         }
-    }    
+    }
 
     return;
 
@@ -59,7 +58,6 @@ void trueDistance(vector<double>& trueDist, int R, unsigned char *q, Dataset *tr
 void ANNsearch(vector<Neighbor>& neighbors, int L, int k, unsigned char *q, HashTable** hashTables){
     unsigned int g_hash = 0;
     double min, manh=0.0;
-
     for(int i=0; i<L; i++){
         g_hash = hashTables[i]->ghash(q);
         min = DBL_MAX;
@@ -96,9 +94,9 @@ void RNGsearch(vector<Neighbor>& neighbors, int L, int R, unsigned char* q, Hash
                 // j++;
             }
         }
-    }  
+    }
     return;
-}    
+}
 
 
 
@@ -118,4 +116,4 @@ void Neighbor::printCubeNeighbor(int i, double trueDist, ofstream& outputf){
     outputf << "distanceTrue: " << trueDist << endl;
 };
 
-Neighbor::~Neighbor(){  };
+Neighbor::~Neighbor(){};

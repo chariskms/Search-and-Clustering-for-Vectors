@@ -12,7 +12,7 @@
 #include "../Search/metrics.h"
 #include "centroids.hpp"
 #define FLOOR_CHANGED_POINTS 100
-#define MAX_LOOPS 1
+#define MAX_LOOPS 3
 #define RADIUS 12000
 
 using namespace std;
@@ -231,6 +231,7 @@ void Clusters::Lloyds(){
     int changedpoints = set->getNumberOfImages();
     //Checking for no-change
     while(changedpoints>FLOOR_CHANGED_POINTS && loops<MAX_LOOPS){
+        cout << "IN FOR: " << loops << endl;
         changedpoints = 0;
         //Update Centroids from clusters
         Update();
@@ -251,7 +252,7 @@ void Clusters::Lloyds(){
                 }
             }
         }
-        cout << "Changed points are: " << changedpoints << " - in loop: " << loops << "\n\n";
+        cout << "Changed points: " << changedpoints << "\n\n";
         loops++;
     }
 }
@@ -262,12 +263,10 @@ void Clusters::AssignReverse(vector<vector<Neighbor>> Neighbors, bool initialize
     int *centroids = Cntrds->getCentroids();
     double **DParray = Cntrds->getDParray();
     Dataset *set = Cntrds->getSet();
+    unsigned char* CentroidVector = NULL;
 
     if(initialize){
-        for(int i=0; i<clusters; i++){
-            CntrdsVectors.push_back(std::vector<unsigned char>());
-            CntrdsVectors[i].push_back(*set->imageAt(centroids[i]));
-        }
+        for(int i=0; i<clusters; i++) CntrdsVectors.push_back(std::vector<unsigned char>());
     }
 
     //Unassign all points
@@ -282,10 +281,13 @@ void Clusters::AssignReverse(vector<vector<Neighbor>> Neighbors, bool initialize
             }
             else{
                 //If is already assigned then find the nearest Centroid
-                double manh = manhattan(set->imageAt(index),  &CntrdsVectors[i][0], set->dimension());
+                if(initialize) CentroidVector = set->imageAt(centroids[i]);
+                else CentroidVector = &CntrdsVectors[i][0];
+                double manh = manhattan(set->imageAt(index), CentroidVector, set->dimension());
                 if(manh<DParray[0][index]){
-                    cout << "Change " << manh << "<" << DParray[0][index] << " -> " << DParray[2][index] << "-" << i << endl;
-
+                    cout << "Change " << manh << "<" << DParray[0][index] << " ~~ " << DParray[2][index] << " -> " << i << endl;
+                    DParray[0][index] = manh;
+                    DParray[2][index] = i;
                 }
             }
 
@@ -297,7 +299,9 @@ void Clusters::AssignReverse(vector<vector<Neighbor>> Neighbors, bool initialize
         if(DParray[0][i]<0){
             min = DBL_MAX;
             for(int j=0; j<clusters; j++){
-                manh = manhattan(set->imageAt(i), &CntrdsVectors[j][0], set->dimension());
+                if(initialize) CentroidVector = set->imageAt(centroids[j]);
+                else CentroidVector = &CntrdsVectors[j][0];
+                manh = manhattan(set->imageAt(i), CentroidVector, set->dimension());
                 if(manh<min){
                     DParray[0][i] = manh;
                     DParray[2][i] = j;
@@ -336,6 +340,7 @@ void Clusters::LSHReverseAssignment(int numHashTables, int numHashFunctions, Has
 
     //Checking for no-change
     while(changedpoints>FLOOR_CHANGED_POINTS && loops<MAX_LOOPS){
+        cout << "IN FOR: " << loops << endl;
         changedpoints = 0;
         //Clear neighbors
         for(int i=0; i<RNGneighbors.size(); i++) RNGneighbors[i].clear();
@@ -360,7 +365,7 @@ void Clusters::LSHReverseAssignment(int numHashTables, int numHashFunctions, Has
                 }
             }
         }
-        cout << "Changed points are: " << changedpoints << " - in loop: " << loops << "\n\n";
+        cout << "Changed points: " << changedpoints << "\n\n";
         loops++;
     }
 }

@@ -11,14 +11,19 @@
 #include <fstream>
 #include "../Search/metrics.h"
 #include "centroids.hpp"
+#define FLOOR_CHANGED_POINTS 100
+#define MAX_LOOPS 1
+#define RADIUS 12000
 
 using namespace std;
 
 Centroids::Centroids(int clusters, int points, Dataset *ptrset){
-    DParray = new double*[2];
+    DParray = new double*[5];
     DParray[0] = new double[points];     //D-Distances
     DParray[1] = new double[points];     //P-Partial sums
     DParray[2] = new double[points];     //Centroid with min dist
+    DParray[3] = new double[points];     //D-Distances with second min dist
+    DParray[4] = new double[points];     //Centroid with second min dist
     centroids = new int[clusters];       //Indexes of centroids
     numpoints = points;
     numclusters = clusters;
@@ -29,6 +34,8 @@ Centroids::~Centroids(){
     delete[] DParray[0];
     delete[] DParray[1];
     delete[] DParray[2];
+    delete[] DParray[3];
+    delete[] DParray[4];
     delete[] DParray;
     delete[] centroids;
 }
@@ -45,10 +52,24 @@ double Centroids::minmaxDist(int lastcentroid, unsigned char* otherCentroid){
     for(int j=0; j<numpoints; j++){
         if(j != centroids[lastcentroid] || assignment){
             manh = manhattan(set->imageAt(j), pointCentroid, set->dimension());
-            if(lastcentroid == 0) DParray[0][j] = DBL_MAX;
+            if(lastcentroid == 0){
+                DParray[0][j] = DBL_MAX;
+                DParray[2][j] = lastcentroid;
+                DParray[3][j] = DBL_MAX;
+            }
             if(manh<DParray[0][j]){
+                if(DParray[0][j]<DParray[3][j]){
+                    DParray[3][j] = DParray[0][j];
+                    DParray[4][j] = DParray[2][j];
+                }
                 DParray[0][j] = manh;
                 DParray[2][j] = lastcentroid;
+            }
+            else{
+                if(manh<DParray[3][j]){
+                    DParray[3][j] = manh;
+                    DParray[4][j] = lastcentroid;
+                }
             }
             if(manh>max) max = manh;
         }
@@ -102,22 +123,23 @@ void Centroids::Initialize(){
 
 Clusters::Clusters(Centroids* argCntrds) : Cntrds(argCntrds){}
 
-void Clusters::Clustering(char* method, char* output, bool complete){
-    //Here output and time exec
+void Clusters::Clustering(char* method, char* output, bool complete, int numHashTables, int numHashFunctions, int maxMhypercube, int hypercubeDim, int numprobes){
     cout << "Begin clustering with " << method << " method" << endl;
     if(strcmp(method, "CLASSIC")==0 || strcmp(method, "classic")==0 || strcmp(method, "Classic")==0){
         Lloyds();
     }
     else if(strcmp(method, "LSH")==0 || strcmp(method, "lsh")==0 || strcmp(method, "Lsh")==0){
-        cout << "Begin clustering with LSH method" << endl;
+        // LSHReverseAssignment(int numHashTables, int numHashFunctions);
     }
     else if(strcmp(method, "HYPERCUBE")==0 || strcmp(method, "hypercube")==0 || strcmp(method, "Hypercube")==0){
         cout << "Begin clustering with Hypercube method" << endl;
+        // PROJReverseAssignment(int maxMhypercube, int hypercubeDim, int numprobes);
     }
     else{
         cout << "Wrong method. The available methods are: Classic, LSH, Hypercube." << endl;
         return;
     }
+    Silhouette();
     Output(method, output, complete);
 }
 
@@ -179,9 +201,10 @@ void Clusters::Lloyds(){
     // index = image[from_cluster][what_image]
     int loops = 0;
     int tmpPoint = 0;
+    int changedpoints = set->getNumberOfImages();
     //Checking for no-change
-    while(loops<1){
-        cout << "In loop: " << loops << endl;
+    while(changedpoints>FLOOR_CHANGED_POINTS && loops<MAX_LOOPS){
+        changedpoints = 0;
         //Update Centroids from clusters
         Update();
 
@@ -197,9 +220,11 @@ void Clusters::Lloyds(){
                     tmpPoint = images[i][j];
                     images[i].erase(images[i].begin()+j);
                     images[newCluster].push_back(tmpPoint);
+                    changedpoints++;
                 }
             }
         }
+        cout << "Changed points are: " << changedpoints << " - in loop: " << loops << "\n\n";
         loops++;
     }
 
@@ -208,17 +233,134 @@ void Clusters::Lloyds(){
 
 }
 
+void Clusters::LSHReverseAssignment(int numHashTables, int numHashFunctions){
+    int points = Cntrds->getNumPoints();
+    int clusters = Cntrds->getNumClusters();
+    double **DParray = Cntrds->getDParray();
+    Dataset *set = Cntrds->getSet();
+
+    int W = 40000;
+    int bucketsNumber = floor(points/16);
+    HashFunction **hashFamily = new HashFunction*[set->getNumberOfPixels()];
+    for(int i=0; i<set->getNumberOfPixels(); i++){
+        hashFamily[i] = NULL;
+    }
+    HashTable **hashTables = new HashTable*[numHashTables];
+    for(int i=0; i<numHashTables; i++){
+        hashTables[i] = new HashTable(set->getNumberOfPixels(),bucketsNumber,numHashFunctions,W,hashFamily);
+        for(int j=0; j<img; j++){
+            unsigned int g_hash = (unsigned int)(hashTables[i]->ghash(set->imageAt(j)));
+            hashTables[i]->getBucketArray()[g_hash%bucketsNumber]->addImage(j,g_hash,set->imageAt(j));
+        }
+    }
+
+    vector<Neighbor> RNGneighbors;
+    // index = image[from_cluster][what_image]
+    int loops = 0;
+    int tmpPoint = 0;
+    int changedpoints = set->getNumberOfImages();
+    //Checking for no-change
+    while(changedpoints>FLOOR_CHANGED_POINTS && loops<MAX_LOOPS){
+        changedpoints = 0;
+        //Update Centroids from clusters
+        Update();
+
+        // Assignment
+        for(int i=0; i<clusters; i++){
+            RNGsearch(RNGneighbors, numHashTables, RADIUS, &CntrdsVectors[i][0], hashTables);
+        }
+
+
+        cout << "Changed points are: " << changedpoints << " - in loop: " << loops << "\n\n";
+        loops++;
+    }
+
+    for(int i=0; i<set->getNumberOfPixels(); i++){
+        if(hashFamily[i]!=NULL){
+            delete hashFamily[i];
+        }
+    }
+    delete[] hashFamily;
+    for(int i=0; i<numHashTables; i++) delete hashTables[i];
+    delete[] hashTables;
+}
+
+// void Clusters::PROJReverseAssignment(){
+//     int W = 40000;
+//
+//     HashFunction** hashFamily = new HashFunction*[trainSet.getNumberOfPixels()];
+//     for(int i = 0; i < trainSet.getNumberOfPixels();i++){
+//         hashFamily[i] = NULL;
+//     }
+//     Projection *projection = new Projection(trainSet.getNumberOfPixels(),bucketsNumber, K,W, hashFamily);
+//     for(int j=0; j<trainSet.getNumberOfImages(); j++){
+//         unsigned int g_hash = (unsigned int)(projection->ghash(trainSet.imageAt(j)));
+//         projection->getBucketArray()[g_hash%bucketsNumber]->addImage(j,g_hash,trainSet.imageAt(j));
+//     }
+//
+//     hyperCubeSearch(outputf, R, N, probes, i, querySet.imageAt(i), &trainSet, projection);
+//
+//
+//     for(int i=0; i<trainSet.getNumberOfPixels(); i++){
+//         if(hashFamily[i]!=NULL){
+//             delete hashFamily[i];
+//         }
+//     }
+//     delete[] hashFamily;
+//     delete projection;
+// }
+
 void Clusters::Silhouette(){
-    //Silhouette of a object:
-    //a(i)->average distance of i objects in same cluster
-    //b(i)->average distance of i to objects in next best cluster
-    //s(i)->(b(i)-a(i))/max{a(i), b(i)}
+    int points = Cntrds->getNumPoints();
+    int clusters = Cntrds->getNumClusters();
+    double **DParray = Cntrds->getDParray();
+    Dataset *set = Cntrds->getSet();
 
-    //Silhouette of a cluster:
-    //average of all s(i) in cluster
+    double a;
+    double b;
+    int index1 = 0;
+    int index2 = 0;
+    double manh = 0, sum_a = 0, sum_b = 0, totalsum = 0, clusterssum = 0, max = 0, result = 0;
 
-    //Silhouette of all clusters:
-    //average s(i) over i=1,...,n
+    for(int i=0; i<images.size(); i++){
+        snumbers.push_back(std::vector<double>());
+        cout << "CLUSTER " << i << "/" << images.size() << endl;
+        clusterssum = 0;
+        for(int j=0; j<images[i].size(); j++){
+            sum_a = 0;
+            sum_b = 0;
+            // a(i) -> Find average dist from all points in same cluster
+            for(int k=0; k<images[i].size(); k++){
+                if(j!=k){
+                    index1 = images[i][j];
+                    index2 = images[i][k];
+                    sum_a+= manhattan(set->imageAt(index1), set->imageAt(index2), set->dimension());
+                }
+            }
+            a = (sum_a/(images[i].size()-1));
+            int nextBestCluster = DParray[4][j];
+            // b(i) -> Find average dist from all points in next best cluster
+            for(int k=0; k<images[nextBestCluster].size(); k++){
+                index1 = images[i][j];
+                index2 = images[nextBestCluster][k];
+                sum_b+=manhattan(set->imageAt(index1), set->imageAt(index2), set->dimension());
+            }
+            b = (sum_b/images[nextBestCluster].size());
+
+            //Calculate s(i) numbers:
+            max = a;
+            if(a<b) max = b;
+            if(max!=0){
+                result = (b-a)/max;
+            }
+            else result = 0;
+            snumbers[i].push_back(result);
+            totalsum+=result;
+            clusterssum+=result;
+        }
+        cout << "For " << i << " Silhouette is: " << clusterssum/images[i].size() << endl;
+    }
+    cout << "Silhouette is: " << totalsum/points;
 }
 
 void Clusters::Output(char* method, char *output, bool complete){
@@ -226,7 +368,7 @@ void Clusters::Output(char* method, char *output, bool complete){
     if (outfile.is_open()){
         outfile << "Algorithm: "<< method << "\n";
         for(int i=0; i<CntrdsVectors.size(); i++){
-            outfile << "CLUSTER-" << i+1 << "{size: " << CntrdsVectors[i].size() << ", centroid: ";
+            outfile << "CLUSTER-" << i+1 << " {size: " << images[i].size() << ", centroid: ";
             for(int j=0; j<CntrdsVectors[i].size(); j++){
                 outfile << (int)CntrdsVectors[i][j] << " ";
             }
@@ -235,7 +377,7 @@ void Clusters::Output(char* method, char *output, bool complete){
         //Silhouette here
         if(complete){
             for(int i=0; i<CntrdsVectors.size(); i++){
-                outfile << "CLUSTER-" << i+1 << "{ ";
+                outfile << "CLUSTER-" << i+1 << " { ";
                 for(int j=0; j<CntrdsVectors[i].size(); j++){
                     outfile << (int)CntrdsVectors[i][j] << " ";
                 }

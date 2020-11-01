@@ -23,10 +23,13 @@ class Clusters{
     Centroids *Cntrds;
     std::vector<std::vector<unsigned char>> CntrdsVectors;
     std::vector<std::vector<int>> images;
+    std::vector<std::vector<double>> snumbers;
 
     public:
         Clusters(Centroids*);
-        void Clustering(char*, char*, bool);
+        void Clustering(char*, char*, bool, int, int, int, int, int);
+        void LSHReverseAssignment(int, int);
+        void PROJReverseAssignment(int, int, int);
         void Update();
         void Lloyds();
         void Silhouette();

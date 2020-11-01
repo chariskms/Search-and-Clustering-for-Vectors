@@ -335,24 +335,34 @@ void Clusters::LSHReverseAssignment(int numHashTables, int numHashFunctions, Has
     int changedpoints = set->getNumberOfImages();
 
     //Checking for no-change
-    // while(changedpoints>FLOOR_CHANGED_POINTS && loops<MAX_LOOPS){
-    //     changedpoints = 0;
-    //     //Update Centroids from clusters
-    //     Update();
+    while(changedpoints>FLOOR_CHANGED_POINTS && loops<MAX_LOOPS){
+        changedpoints = 0;
+        //Clear neighbors
+        for(int i=0; i<RNGneighbors.size(); i++) RNGneighbors[i].clear();
+
+        //Update Centroids from clusters
+        Update();
 
         // Assignment
-        // for(int i=0; i<clusters; i++){
-        //     RNGsearch(RNGneighbors, numHashTables, RADIUS, &CntrdsVectors[i][0], hashTables);
-        //     // for(int j=0; j<RNGneighbors.size(); j++){
-        //     //     cout << "Here " << RNGneighbors[j].getIndex() << endl;
-        //     //
-        //     // }
-        // }
+        for(int i=0; i<clusters; i++)
+            RNGsearch(RNGneighbors[i], numHashTables, RADIUS, &CntrdsVectors[i][0], hashTables);
+        AssignReverse(RNGneighbors, false);
 
-    //
-    //     cout << "Changed points are: " << changedpoints << " - in loop: " << loops << "\n\n";
-    //     loops++;
-    // }
+        //Change points from the old cluster to the new
+        for(int i=0; i<clusters; i++){
+            for(int j=0; j<images[i].size(); j++){
+                int newCluster = DParray[2][images[i][j]];
+                if(i!=newCluster){
+                    tmpPoint = images[i][j];
+                    images[i].erase(images[i].begin()+j);
+                    images[newCluster].push_back(tmpPoint);
+                    changedpoints++;
+                }
+            }
+        }
+        cout << "Changed points are: " << changedpoints << " - in loop: " << loops << "\n\n";
+        loops++;
+    }
 }
 
 // void Clusters::PROJReverseAssignment(){

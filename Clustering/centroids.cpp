@@ -164,7 +164,32 @@ void Clusters::Clustering(char* method, char* output, bool complete, int numHash
     }
     else if(strcmp(method, "HYPERCUBE")==0 || strcmp(method, "hypercube")==0 || strcmp(method, "Hypercube")==0){
         cout << "Begin clustering with Hypercube method" << endl;
-        // PROJReverseAssignment(int maxMhypercube, int hypercubeDim, int numprobes);
+        int points = Cntrds->getNumPoints();
+        int clusters = Cntrds->getNumClusters();
+        double **DParray = Cntrds->getDParray();
+        Dataset *set = Cntrds->getSet();
+
+        int W = 40000;
+        int bucketsNumber = floor(points/16);
+
+        HashFunction** hashFamily = new HashFunction*[set->getNumberOfPixels()];
+        for(int i = 0; i < set->getNumberOfPixels();i++){
+            hashFamily[i] = NULL;
+        }
+        Projection *projection = new Projection(set->getNumberOfPixels(), bucketsNumber, hypercubeDim,W, hashFamily);
+        for(int j=0; j<set->getNumberOfImages(); j++){
+            unsigned int g_hash = (unsigned int)(projection->ghash(set->imageAt(j)));
+            projection->getBucketArray()[g_hash%bucketsNumber]->addImage(j,g_hash,set->imageAt(j));
+        }
+        // PROJReverseAssignment(int maxMhypercube, int hypercubeDim, int numprobes,projection);
+
+        for(int i=0; i<set->getNumberOfPixels(); i++){
+                if(hashFamily[i]!=NULL){
+                    delete hashFamily[i];
+                }    
+            } 
+        delete[] hashFamily;
+        delete projection;
     }
     else{
         cout << "Wrong method. The available methods are: Classic, LSH, Hypercube." << endl;
@@ -390,11 +415,7 @@ void Clusters::PROJReverseAssignment(int maxMhypercube, int hypercubeDim, int nu
         unsigned int g_hash = (unsigned int)(projection->ghash(set->imageAt(j)));
         projection->getBucketArray()[g_hash%bucketsNumber]->addImage(j,g_hash,set->imageAt(j));
     }
-    ofstream outputf("out");
-    if (!outputf.is_open()){
-        cerr<<"Failed to open output data."<<endl;
-        return;
-    }
+    
 
     int loops = 0;
     int tmpPoint = 0;
@@ -421,7 +442,6 @@ void Clusters::PROJReverseAssignment(int maxMhypercube, int hypercubeDim, int nu
         cout << "Changed points are: " << changedpoints << " - in loop: " << loops << "\n\n";
         loops++;
     }
-    outputf.close();
 
     for(int i=0; i<set->getNumberOfPixels(); i++){
         if(hashFamily[i]!=NULL){

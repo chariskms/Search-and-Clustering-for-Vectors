@@ -119,7 +119,7 @@ int main(int argc, char** argv){
             }
             double cubeAnnTime, cubeRngTime, trueAnnTime, trueRngTime;
             cout<<"here"<<endl;
-            for(int i = 0 ;i < 100; i++){
+            for(int i = 0 ;i < 10; i++){
                 vector<Neighbor> ANNneighbors;
                 vector<Neighbor> RNGneighbors;
                 vector<double> ANNtrueDist;

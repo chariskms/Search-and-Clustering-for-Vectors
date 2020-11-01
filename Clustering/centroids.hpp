@@ -1,5 +1,6 @@
 #include "../Search/dataset.hpp"
 #include "../Search/lshAlgorithms.h"
+#include "../Search/projection.hpp"
 #include "../Search/hash.h"
 
 class Centroids{
@@ -25,17 +26,18 @@ class Clusters{
     Centroids *Cntrds;
     std::vector<std::vector<unsigned char>> CntrdsVectors;
     std::vector<std::vector<int>> images;
-    std::vector<std::vector<double>> snumbers;
+    std::vector<double> snumbers;
 
     public:
         Clusters(Centroids*);
         void Clustering(char*, char*, bool, int, int, int, int, int);
         void AssignReverse(std::vector<std::vector<Neighbor>>, bool);
         void LSHReverseAssignment(int, int, HashTable**);
-        void PROJReverseAssignment(int, int, int);
+        void PROJReverseAssignment(int, int, Projection*);
         void Update();
         void Lloyds();
+        void FindNextBest();
         void Silhouette();
-        void Output(char*, char*, bool);
+        void Output(char*, char*, bool, double, double);
         ~Clusters();
 };
